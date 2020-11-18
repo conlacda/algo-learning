@@ -1,3 +1,19 @@
+# Tổng hợp 1 số thuật toán sắp xếp
+
+## Merge sort
+
+### Khái niệm
+
+### Diễn giải
+
+Mergesort có 3 phần chính: chia (divide), sắp xếp (sort), hợp lại (conquer)
+
+1. Nếu có 1 phần tử thì trả về, dừng
+2.
+
+### Code
+
+```python
 m = [12,5,9,7,1,10]
 def merge(left, right):
     result = []
@@ -28,3 +44,4 @@ def merge_sort(m):
     return merge(left, right)
 
 print(merge_sort(m))
+```
