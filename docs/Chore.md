@@ -83,3 +83,33 @@ int main(){
 }
 
 ```
+
+***Bài toán***: Dãy con tăng lớn nhất
+> Phân tích: số đằng sau sẽ tính toán dựa vào số những giá trị đằng trước. Nếu với i>j nếu x[i] > x[j] và a[i] < a[j] thì a[i] = a[j] + 1. Mảng a sẽ lưu trữ lại độ dài dãy con tính đến i. Để lấy ra danh sách dãy con thì dùng 1 mảng b để đánh dấu vị trí của phần tử trước đó a[i] = a[j] +1; b[i] = j
+
+```Python
+# Dãy con tăng lớn nhất
+x = [1,2,6,3,10,4,5,4,1,11]
+a = [1] * len(x)
+b = [0] * len(x)
+if len(x) == 1:
+    print(1)
+else:
+    max, pos = 1,1
+    # if x[i] > x[j] and a[j] > max: a[i] = a[j]+ 1
+    for i in range(1,len(x)):
+        a[i] = 1
+        for j in range(0,i):
+            if x[i] > x[j] and a[i] <= a[j]:
+                a[i] = a[j] + 1
+                b[i] = j
+                if a[i] > max:
+                    max = a[i]
+                    pos = i
+    # print(a)
+    # print(b)
+    # print(max, pos)
+    for i in range(max):
+        print(x[pos])
+        pos = b[pos]
+```
