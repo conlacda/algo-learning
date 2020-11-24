@@ -113,3 +113,37 @@ else:
         print(x[pos])
         pos = b[pos]
 ```
+
+```C++
+#include <iostream>
+#include <vector>
+
+using namespace std;
+int main(){
+    vector<int> x;
+    x.assign({1,2,6,5,3,4,9,13,10});
+    vector<int> a,b;
+    for(int i=0;i<x.size();i++){
+        a.push_back(1);
+        b.push_back(0);
+    }
+    int max = 1;
+    int pos = 0;
+    for (int i=1; i< x.size();i++){
+        for (int j=0; j<i;j++){
+            if (x[i] > x[j] && a[i] <= a[j]){
+                a[i] = a[j] + 1; // tang do dai day con tang
+                b[i] = j; // luu vi tri
+                if (a[i] > max){
+                    max = a[i];
+                    pos = i;
+                }
+            }
+        }
+    }
+    for(int i=0;i< max;i++){
+        cout << x[pos] << " ";
+        pos = b[pos];
+    }
+}
+```
