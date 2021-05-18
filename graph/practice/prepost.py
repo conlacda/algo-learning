@@ -10,9 +10,7 @@ visited = [False] * (vertice_num + 1)
 clock = 0
 def explore(v):
     global pre, post, visited, clock
-    if visited[v]:
-        return
-    else:
+    if not visited[v]:
         clock += 1
         pre[v] = clock
         visited[v] = True
@@ -25,7 +23,7 @@ def explore(v):
                     explore(edge[0])
         clock +=1
         post[v] = clock
-explore(1)
+explore(2)
 print(visited)
 # Pre post thể hiện thứ tự duyệt qua các đỉnh của đồ thị
 print(f"pre = {pre}")
