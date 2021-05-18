@@ -2,7 +2,7 @@
 
 **Xét đồ thị có hướng**
 ## Directed acyclic graph (DAG)
-Đồ thị không chu trình có hướng là đồ thị không khép kín (no cycles)
+Đồ thị không chu trình có hướng là đồ thị không khép kín (no cycles) - bất kỳ mọi đường từ u->v không tồn tại v->u
 
 Thay đổi giải thuật DFS 1 chút
 ```
@@ -27,7 +27,55 @@ post(i) > post(j) i< j. nghĩa là đỉnh i xuất hiện trước sẽ đc qua
 
 *Preference:* https://iq.opengenus.org/topological-sorting-dfs/
 
-## Strong connected components
+## Strong connected components (SCC)
 > Thành phần liên thông mạnh (tiếng Việt)
 
-Đang xem dở: https://www.coursera.org/learn/algorithms-on-graphs/lecture/OlOTT/strongly-connected-components
+**Khái niệm:** thành phần liên thông mạnh là 1 phần của đồ thị mà mọi đỉnh có thể đi qua nhau (với mọi u,v có path(u->v) và path(v->u))
+
+![](images/strongly-connected-components-example-1.png)
+
+Xét 1 đồ thị với các SCC
+![](images/strongly-connected-components-example.png)
+
+Nhóm các SCC lại ta được 1 DAG
+![](images/strongly-connected-components-example-2.png)
+
+Khi các SCC được gom lại ta được metagraph
+=> **Theorem**:  Mọi metagraph (đồ thị G khi coi mọi SCC là 1 điểm) đều là DAG. 1 metagraph thể hiện các thành phần SCC liên kết thế nào với nhau
+
+**Theorem:**  với C, C' là 2 SCC với 1 cạnh đi từ C -> C' thì max_post(C) > max_post(C'). Dễ hiểu hơn thì có 2 điểm C, C' và edge CC' thì khi trình tự duyệt DFS sẽ là C->C'->..->C'->C
+
+**Sink component:** là component chỉ có chiều đến (incoming), không có chiều đi (outwards)
+
+**Source component:** là component có chiều đi ko có chiều đến (đang xét component là 1 SCC)
+
+*Vấn đề*: tìm sink component của G
+
+Xét GR (graph reverse) của G với mọi hướng của G sẽ đảo ngược lại tại GR.
+GR sẽ có SCC hệt như G nhưng source component sẽ thành sink component và ngược lại. Source component sẽ có post lớn nhất -> tìm ra source của GR sẽ chính là sink của G
+
+```
+Giải thuật cơ bản
+<!-- Tìm các SCC có trong đồ thị SCCs()-->
+DFS(GR)
+v = max_post(GR)  # max_post của GR chính là source component GR nghĩa là sink component của G
+Explore(v) # v thuộc sink component nên explore() sẽ ra những node thuộc sink component đó
+vertices found are fist SCC. (visited[v] = True)
+Remove from G and repeat
+```
+
+```
+Giải thuật hiệu quả hơn
+SCCs()
+DFS(GR)
+for v in V in reverse postorder:
+    if not visited(v):
+        explore(v)
+        mark visited vertices as new SCC
+# Ý tưởng là DFS(GR) -> max_post(v) là source GR -> sink của G.
+Duyệt từ max_post(v) đổ lại thì sẽ lần lượt ra sink G nghĩa là 1 SCC. Đánh dấu duyệt rổi nên sẽ ko cần xóa vertex đi.
+Ví dụ GR có post là [[10,9,8],[7,6],[5,4]] (nếu quá khó hiểu thì tham khảo)
+-> G sẽ là [[5,4],[7,6],[10,9,8]] theo thứ tự sẽ là source -> sink. Explore điểm cuối 8 sẽ ra đc 10,9 là 1 SCC. sau đó tới 6 sẽ explore đc 7, sẽ ko tới 10,9,8 vì visited=True. Ngược dần sẽ ra đc toàn bộ SCCs
+``
+
+# Đang xem dở: https://www.coursera.org/learn/algorithms-on-graphs/lecture/LEl7Y/computing-strongly-connected-components
