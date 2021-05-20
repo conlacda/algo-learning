@@ -76,6 +76,12 @@ for v in V in reverse postorder:
 Duyệt từ max_post(v) đổ lại thì sẽ lần lượt ra sink G nghĩa là 1 SCC. Đánh dấu duyệt rổi nên sẽ ko cần xóa vertex đi.
 Ví dụ GR có post là [[10,9,8],[7,6],[5,4]] (nếu quá khó hiểu thì tham khảo)
 -> G sẽ là [[5,4],[7,6],[10,9,8]] theo thứ tự sẽ là source -> sink. Explore điểm cuối 8 sẽ ra đc 10,9 là 1 SCC. sau đó tới 6 sẽ explore đc 7, sẽ ko tới 10,9,8 vì visited=True. Ngược dần sẽ ra đc toàn bộ SCCs
-``
-
-# Đang xem dở: https://www.coursera.org/learn/algorithms-on-graphs/lecture/LEl7Y/computing-strongly-connected-components
+* Ý tưởng: sink của GR là vùng trũng nhất nhưng khi lật ngược lại thì nó sẽ trở thành nguồn vì ko có incoming component. -> DFS khi duyệt sẽ trả về post lớn nhất tại component đó.
+Chứng minh source luôn là phần có chứa max_post(). Giả sử duyệt từ source thì sau khi đi qua các phần sẽ quay lại đúng điểm ban đầu (1 lần duyệt). Nếu duyệt từ bất kì 1 điểm nào khác source. Mọi component đứng sau nó sẽ được duyệt rồi for v in V của DFS() sẽ tiếp tục, khi đó post sẽ chắc chắn lớn hơn phần đã được duyệt
+VÍ dụ: A->B->C
+Nếu từ A ta có A -> B -> C->C->B->A(clock=6=post)
+Nếu 2 lần từ B rồi mới A
+B->C->C->B (clock = 4)
+A->A (clock=6=post)
+```
+![](images/scc-algorithm.png)
