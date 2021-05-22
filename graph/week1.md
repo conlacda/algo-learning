@@ -81,7 +81,7 @@ Explore(V){
             Explore(w)
 }
 ```
-![](images/explore-component.png)
+![](images/w1-explore-component.png)
 
 ## Previsit and postvisit
 > Đánh dấu thứ tự (thời điểm qua đỉnh). Pre: đi qua lần đầu, post: quay lại.
@@ -101,6 +101,6 @@ global clock
 v[pre/post] = clock
 clock +=1
 ```
-![](images/pre-post-visit.png)
+![](images/w1-pre-post-visit.png)
 
 Trong hình này thể hiện thứ tự duyệt đồ thị

@@ -32,13 +32,13 @@ post(i) > post(j) i< j. nghĩa là đỉnh i xuất hiện trước sẽ đc qua
 
 **Khái niệm:** thành phần liên thông mạnh là 1 phần của đồ thị mà mọi đỉnh có thể đi qua nhau (với mọi u,v có path(u->v) và path(v->u))
 
-![](images/strongly-connected-components-example-1.png)
+![](images/w2-strongly-connected-components-example-1.png)
 
 Xét 1 đồ thị với các SCC
-![](images/strongly-connected-components-example.png)
+![](images/w2-strongly-connected-components-example.png)
 
 Nhóm các SCC lại ta được 1 DAG
-![](images/strongly-connected-components-example-2.png)
+![](images/w2-strongly-connected-components-example-2.png)
 
 Khi các SCC được gom lại ta được metagraph
 => **Theorem**:  Mọi metagraph (đồ thị G khi coi mọi SCC là 1 điểm) đều là DAG. 1 metagraph thể hiện các thành phần SCC liên kết thế nào với nhau
@@ -84,4 +84,4 @@ Nếu 2 lần từ B rồi mới A
 B->C->C->B (clock = 4)
 A->A (clock=6=post)
 ```
-![](images/scc-algorithm.png)
+![](images/w2-scc-algorithm.png)
