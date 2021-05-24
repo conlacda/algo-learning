@@ -62,7 +62,7 @@ class Graph():
             # the vertex in not in the shotest path tree
             for v in range(self.V):
                 if self.graph[u][v] > 0 and sptSet[v] == False and \
-                dist[v] > dist[u] + self.graph[u][v]:
+                dist[v] > dist[u] + self.graph[u][v]: # self.graph[u][v] > 0: có đường đi, sptSet[v] == False: chưa thăm
                         dist[v] = dist[u] + self.graph[u][v]
   
         self.printSolution(dist)
@@ -77,7 +77,6 @@ g.graph = [[0, 4, 0, 0, 0, 0, 0, 8, 0],
         [0, 0, 4, 14, 10, 0, 2, 0, 0],
         [0, 0, 0, 0, 0, 2, 0, 1, 6],
         [8, 11, 0, 0, 0, 0, 1, 0, 7],
-        [0, 0, 2, 0, 0, 0, 6, 7, 0]
-        ];
+        [0, 0, 2, 0, 0, 0, 6, 7, 0]];
   
 g.dijkstra(0);

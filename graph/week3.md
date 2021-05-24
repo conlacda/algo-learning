@@ -52,5 +52,3 @@ Thuật toán BFS sẽ duyệt qua các đỉnh (|E|) (hàm Enqueue - mỗi đ�
 Tại đây có thêm đánh dấu xem thứ tự các node được visit. prev[v] = u => node u is parent of v
 
 Còn 1 bước nữa từ các biến có được từ BFS() dựng lại cây (ko xem)
-## Đang xem dở
-https://www.coursera.org/learn/algorithms-on-graphs/lecture/X7NUe/shortest-path-tree
