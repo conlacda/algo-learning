@@ -26,11 +26,19 @@ def bfs(v):
         u = queue[0]
         del (queue[0])
         for edge in edges:
-            if edge[0] == u or edge[1] == u:
+            if edge[0] == u or edge[1] == u: # đồ thị vô hướng
                 m = 0 if edge[0] == u else 1
-                if dist[edge[1-m]] == math.inf:
+                if dist[edge[1-m]] == math.inf: # nếu chưa được duyệt tới
                     queue.append(edge[1-m])
                     dist[edge[1-m]] = dist[edge[m]] + 1
+                    prev[edge[1-m]] = u
 
 bfs(1)
 print(dist)
+print(prev)
+"""
+Dist thể hiện khoảng cách gần nhất tới điểm bắt đầu
+Prev thể hiện node đó đã được duyệt tới từ node nào
+prev = [None, None, 1, 1, 2, 4, 2] -> node 1 = None - bắt đầu
+                                   -> node 4 = 2 là trước đó được duyệt từ node 2
+"""
