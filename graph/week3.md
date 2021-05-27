@@ -26,7 +26,7 @@ Q = {S} # queue khởi tạo chỉ gồm node S
 while Q is not empty:
     u = Dequeue(Q) # lấy ra phần tử đầu tiên trong Q
     for all(u,v) in E:
-        if dist[v] = inf # chưa duyệt (layer ngoài so với layer đã duyệ):
+        if dist[v] = inf # chưa duyệt (layer ngoài so với layer đã duyệt):
             Enqueue(Q,v) # thêm vào hàng đợi
             dist[v] = dist[u] + 1 # v sẽ ở layer bên ngoài 1 đơn vị so với layer của u. Nếu u và v cùng layer thì trong 1 lần for thì v cũng đã được duyệt
 ```
