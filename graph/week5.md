@@ -23,5 +23,6 @@ Cho 1 đồ thị G có trọng số. Tìm ra đồ thị con G' nằm trong G s
 **Prim's algorithm:**  thuật toán bắt đầu bằng 1 node bất kỳ, thêm 1 đỉnh mới có giá trị cạnh nhỏ nhất (cạnh có 1 đỉnh mới và 1 đinh đã có)
 
 -> considering_edges = list of (u,v) if (u in Gr and v not in Gr) or (u not in Gr and v in Gr)
+(Danh sách các đỉnh đã có sẽ tương ứng với danh sách các cạnh mà 1 đỉnh đã có và 1 đỉnh mới - lấy ra cạnh nhỏ nhất trong chúng để thêm vào MST)
 
 ![](images/w5-kruskal-algorithm.png)
