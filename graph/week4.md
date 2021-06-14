@@ -14,12 +14,15 @@ Sử dụng công thức trên ta có cách tiếp cận đầu tiên cho việc
 
 ![Pseudo-code of dijkstra algorithm](images/w4-dijkstra-pseudo-code.png)
 
-B1: Khởi tạo mọi khoảng cách dist[inf, inf, ..]
+**B1**: Khởi tạo mọi khoảng cách dist[inf, inf, ..]
     sptSet = [False,...] đánh dấu mọi đỉnh chưa được xét
     Khoảng cách dist[source] = 0 # dist(source->source) = 0
-B2: For i in range(len(V))
-Tại đây vòng for tương ứng với while H is not empty. Nhưng với mỗi vòng lặp sẽ thực hiện việc xử lý 1 vertex (node) nên vòng lặp sẽ tương đương với range(len(V))
-B3: Lấy ra node đang có khoảng cách nhỏ nhất chưa được xử lý
+
+**B2**: For i in range(len(V))
+
+Tại đây vòng for tương ứng với **while H is not empty**. Nhưng với mỗi vòng lặp sẽ thực hiện việc xử lý 1 vertex (node) nên vòng lặp sẽ tương đương với range(len(V))
+
+**B3**: Lấy ra node đang có khoảng cách nhỏ nhất chưa được xử lý
 * Lưu ý: xét thời điểm ban đầu. S (source) bắt đầu được xử lý thì mọi neighbour của nó sẽ dược tính khoảng cách -> khi lấy ra node có khoảng cách nhỏ nhất node đó mới chuẩn bị được xử lý
 -> node đó thỏa mãn là min(dist) và sptSet[node] = False
 

@@ -52,7 +52,8 @@ max_post = max(post)
 min_post = min(post)
 index = max_post
 
-while index > min_post:
+# while index > min_post:
+while index >= min_post:
     try:
         vertex = post.index(index)
         SCCs.append([])
