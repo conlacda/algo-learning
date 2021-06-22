@@ -1,7 +1,7 @@
 ## Vấn đề
 Có string dài 10^9 kí tự và 10^12 pattern. Làm sao để match các pattern đó trong thời gian giới hạn.
 
-## Naive solution:
+## **Naive solution:**
 
 ### Mã giả
 ```
@@ -12,7 +12,7 @@ for string in strings:
 ```
 ### Complexity
 **O(|len(strings)| * |len(patterns)|)**
-## First improvement:
+## **First improvement:**
 
 ### Trie creation
 
@@ -32,7 +32,7 @@ Cho các string chạy lần lượt qua cây. Nếu nó đạt tới nút lá t
 
 Nhận xét: độ phức tạp từ ***len(patterns)*** đã chuyển thành ***longest pattern***
 
-## Second improvement
+## **Second improvement**
 
 ### Chuyển text sang thành trie
 
@@ -99,5 +99,5 @@ Bộ nhớ: O(|Text|) vì chỉ có text dựng cây, còn pattern sẽ chạy q
 Multiple pattern matching: tại đây mình chờ đợi 1 cách làm để hợp nhất 2 cái cây ở first improvement và second improvement nhưng ko có. Khóa học để mở vấn đề -> cần nghiên cứu thêm.
 
 ### TODO:
-* cài đặt suffix tree
+* bài tập cuối tuần
 * tìm hiểu multiple pattern matching
