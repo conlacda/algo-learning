@@ -93,5 +93,37 @@ while (x>>=1){
 x = pow(2,n) = 10...0 -> x-1 = 01...1  
 **x&(x-1) = 0**
 
-### Đang xem dở 
-https://www.geeksforgeeks.org/bitwise-hacks-for-competitive-programming/
+### Set bit tại vị trí n thành 1
+
+x = 10 = 1010.  
+mask = 100 = 1<<N => x|mask = 1110  
+=> **x |= 1<<N**
+
+### Clear bit tại vị trí n thành 0
+
+10 = 1010 -> 1000 (clear bit 1-th)  
+1010 & 1101 = 1010 & ~0010 = 1010 & ~(1<<N)  
+=> x &= ~(1<<N)
+
+## Toggle vị trí i-th từ 0<->1  
+
+10 = 1010 -> toggle bit 2-th -> 1110  
+
+Sử dụng tính chất phép XOR  
+* 1^1 = 0
+* 0^0 = 0
+* 1^0 = 1
+* 0^1 = 1
+
+**1^x = ~x  0^x=x**
+
+1010 ^ 0100 = 1110
+
+=> **x ^= (1<<N)**
+
+## Lấy ra bit thứ n
+
+1010 bit số 2 = 0  
+1010 & 100 = 0000 = true  
+1010 & 10 = 10 = false  
+=> x &= (1<<N)
