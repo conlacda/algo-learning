@@ -1,6 +1,8 @@
 # Fenwicktree
 
 ## Code
+
+### One-based indexing
 ```c++
 // Reference: https://github.com/galencolin/cp-templates/blob/master/templates/bit.cpp
 // Practice: https://atcoder.jp/contests/practice2/tasks/practice2_b
@@ -12,6 +14,7 @@ const ll mod = 1e9 + 7;
 #define ld long double
 
 using namespace std;
+// Range query, point update => fw.add(point, val) fw.sum(l,r);
 struct FenwickTree { // One-based indexing
     int n;
     vector < long long > bitree;
@@ -82,7 +85,10 @@ int main() {
 }
 ```
 
+### Zero-based indexing
 ```c++
+// Practice: https://atcoder.jp/contests/practice2/tasks/practice2_b
+// Reference: https://cp-algorithms.com/data_structures/fenwick.html#toc-tgt-9
 #include<bits/stdc++.h>
 
 typedef long long ll;
@@ -90,14 +96,14 @@ const ll mod = 1e9 + 7;
 #define ld long double
 
 using namespace std;
-
-struct FenwickTree {
+// Range query, point update => fw.add(point, val) fw.sum(l,r);
+struct FenwickTree { // Zero-based indexing
     vector<long long> bit;  // binary indexed tree
     int n;
 
     FenwickTree(int n) {
         this->n = n;
-        bit.assign(n, 0);
+        bit.assign(n, 0); // bit = vector<long long>(n,0);
     }
 
     FenwickTree(vector<int> a) : FenwickTree(a.size()) {
@@ -122,6 +128,12 @@ struct FenwickTree {
             bit[idx] += delta;
     }
 };
+/*
+vector<int> a{1,2,3,4,5};
+FenwickTree fw(a);
+fw.add(index, value); // index from 0 to N-1
+fw.sum(l, r) // sum a[l], a[l+1],..., a[r];
+*/
 int main(){
     #ifdef DEBUG
         freopen("inp.txt", "r", stdin);
