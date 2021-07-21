@@ -82,5 +82,70 @@ int main() {
 }
 ```
 
+```c++
+#include<bits/stdc++.h>
+
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+
+using namespace std;
+
+struct FenwickTree {
+    vector<long long> bit;  // binary indexed tree
+    int n;
+
+    FenwickTree(int n) {
+        this->n = n;
+        bit.assign(n, 0);
+    }
+
+    FenwickTree(vector<int> a) : FenwickTree(a.size()) {
+        for (size_t i = 0; i < a.size(); i++)
+            add(i, a[i]);
+    }
+
+    long long sum(int r) {
+        if (r==-1) return 0;
+        long long ret = 0;
+        for (; r >= 0; r = (r & (r + 1)) - 1)
+            ret += bit[r];
+        return ret;
+    }
+
+    long long sum(int l, int r) {
+        return sum(r) - sum(l-1);
+    }
+
+    void add(int idx, int delta) {
+        for (; idx < n; idx = idx | (idx + 1))
+            bit[idx] += delta;
+    }
+};
+int main(){
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    int N, M;
+    cin >> N >> M;
+    vector<int> a;
+    for (int i=0;i<N;i++){
+        int x; cin >> x;
+        a.push_back(x);
+    }
+    FenwickTree fw(a);
+    
+    while (M--){
+        int q,l,r;
+        cin >> q>>l>>r;
+        if (q ==0){
+            fw.add(l, r);
+        } else {
+            cout << fw.sum(l,r-1) << '\n';
+        }
+    }
+}
+```
 ## Reference
 * https://cp-algorithms.com/data_structures/fenwick.html#toc-tgt-1
