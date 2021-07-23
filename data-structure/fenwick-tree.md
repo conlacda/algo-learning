@@ -370,3 +370,7 @@ int main()
 ```
 ## Reference
 * https://cp-algorithms.com/data_structures/fenwick.html#toc-tgt-1
+
+## Practice
+
+[Paractice Exercise here](fenwicktree-practice.md)
