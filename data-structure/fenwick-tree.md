@@ -85,7 +85,7 @@ int main() {
 }
 ```
 
-### Zero-based indexing
+### Zero-based indexing (Mainly use)
 ```c++
 // Practice: https://atcoder.jp/contests/practice2/tasks/practice2_b
 // Reference: https://cp-algorithms.com/data_structures/fenwick.html#toc-tgt-9
@@ -163,9 +163,7 @@ int main(){
 ### Range update, point query
 ```c++
 // Practice: https://www.codechef.com/problems/SPREAD
-// Warning: has not been confirmed
 #include<bits/stdc++.h>
-
 
 typedef long long ll;
 const ll mod = 1e9 + 7;
@@ -173,50 +171,64 @@ const ll mod = 1e9 + 7;
 
 using namespace std;
 
+// Confirmed: https://www.codechef.com/viewsolution/49071966
 // Full example: https://github.com/conlacda/algo/blob/master/data-structure/fenwick-tree.md
 // Range update - point query
-struct FenwickTree { // Zero-base indexing
-    vector<long long> bit;  // binary indexed tree
-    int n;
-    FenwickTree(int n) {
-        this->n = n+1;
-        bit.assign(this->n, 0); // bit = vector<long long> (n, 0);
+template <typename T>
+struct fenwick_tree { // One-based indexing
+    vector <T> bit;
+    int N;
+
+    fenwick_tree(int n) {
+        this->N = n+1;
+        bit.assign(n + 1, 0);
     }
 
-    FenwickTree(vector<ll> a) : FenwickTree(a.size()) {
-        for (size_t i = 0; i < a.size(); i++)
-            range_add(i,i,a[i]);
+    fenwick_tree(vector <T> a) : fenwick_tree(a.size()) {
+        int sz = a.size();
+        for (int i = 1; i <= sz; ++i) {
+            update(i, i, a[i-1]);
+        }
     }
-    void internal_add(int idx, int val) {
-        for (++idx; idx < n; idx += idx & -idx)
-            bit[idx] += val;
+
+    void internal_update(int idx, T val) {
+        for (int i = idx; i < N; i += (i & (-i))) {
+            bit[i] += val;
+        }
     }
-    void range_add(int l, int r, int val) {
-        internal_add(l, val);
-        internal_add(r + 1, -val);
+
+    void update(int l, int r, T val) {
+        internal_update(l, val);
+        internal_update(r + 1, -val);
     }
-    int point_query(int idx) {
-        int ret = 0;
-        for (++idx; idx > 0; idx -= idx & -idx)
-            ret += bit[idx];
-        return ret;
+
+    T query(int idx) {
+        T ans = 0;
+        for (int i = idx; i; i -= (i & (-i))) {
+            ans += bit[i];
+        }
+        return ans;
+    }
+
+    T query(int l, int r) {
+        return query(r) - query(l - 1);
+    }
+
+    void original(){
+        for (int i=1;i<N;i++){
+            cout << query(i) << ' ';
+        }
+        cout << '\n';
     }
 };
 /*
-Initialize:
-vector<long long> a{1,2,3,4,5};
-FenwickTree fw(a);
----OR---
-vector<long long> a{1,2,3,4,5};
-FenwickTree fw(a.size());
-for (int i=0;i<a.size();i++){
-    fw.range_add(i, i, a[i]);
-}
-Range add: fw.range_add(l,r,val) // index from 0
-    if just add l -> fw.range_add(l,l,val)
-Point query: fw.poin_query(index);
+vector<ll> a{1,2,3,4,5,6,7};
+fenwick_tree<ll> fw(a);
+fw.original();
+fw.update(1,7,2);
+fw.original();
+cout << fw.query(7);
 */
-
 int main(){
     ios::sync_with_stdio(0);
     cin.tie(0);
@@ -224,21 +236,20 @@ int main(){
         freopen("inp.txt", "r", stdin);
         freopen("out.txt", "w", stdout);
     #endif
-    int n,t,c;
-    cin >> n>>t>>c;
-    vector<int> a(n, c);
-    FenwickTree fw(a);
-    while (t--){
-        char qs;
-        cin >> qs;
-        if (qs == 'Q'){
-            int x;
-            cin >> x;
-            cout << fw.point_query(x-1) << '\n';
+    int N, Q, V;
+    cin >> N >> Q>>V;
+    vector<ll> a(N,V);
+    fenwick_tree<ll> fw(a);
+    while (Q--){
+        char s;
+        cin >> s;
+        if (s == 'Q'){
+            int p; cin >> p;
+            cout << fw.query(p) << '\n';
         } else {
-            int l,r,v;
-            cin >> l>>r>>v;
-            fw.range_add(l-1, r-1, v);
+            int p,q,k;
+            cin >> p>>q>>k;
+            fw.update(p,q,k);
         }
     }
 }
