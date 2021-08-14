@@ -17,7 +17,7 @@ On the first line of the input is a single positive integer, telling the number 
 Output: 
 For each test case, output a line with the correct permutation of the values 1 to n, space separated. The first number showing the top card of the pack, etc…
 Input:
-2
+3
 4
 5
 50 
