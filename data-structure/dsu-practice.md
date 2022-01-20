@@ -254,6 +254,7 @@ int main(){
 <p>
 
 ```c++
+// https://www.hackerearth.com/practice/data-structures/disjoint-data-strutures/basics-of-disjoint-data-structures/practice-problems/algorithm/lexicographically-minimal-string-6edc1406/description/
 #include<bits/stdc++.h>
 
 typedef long long ll;
