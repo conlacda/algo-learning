@@ -140,7 +140,7 @@ class DSU_has_weight {
   int distance(int a, int b){
     int pa = find_set(a);
     int pb = find_set(b);
-    if (pa != pb) return -INT_MAX;
+    if (pa != pb) return INT_MAX;
     else return weight[a] - weight[b];
   }
 };
