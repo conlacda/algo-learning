@@ -193,3 +193,87 @@ int main(){
 }
 ```
 </details>
+
+<details>
+  <summary>Beautiful Numbers - 300C</summary>
+  
+```c++
+// https://codeforces.com/contest/300/submission/156397027
+#include<bits/stdc++.h>
+
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+
+using namespace std;
+
+// Copy from nealwu's template - http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0200r0.html
+template<class Fun> class y_combinator_result { Fun fun_; public:template<class T> explicit y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {} template<class ...Args> decltype(auto) operator()(Args &&...args) { return fun_(std::ref(*this), std::forward<Args>(args)...); }}; template<class Fun> decltype(auto) y_combinator(Fun &&fun) { return y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun)); }
+
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+
+int maxN = 1000003;
+vector<ll> mod_inv_range(ll m){
+    vector<ll> inv(1000003, 1);
+    for (int i=2;i<m;i++){
+        inv[i] = mod - (mod/i) * inv[mod%i] % mod; // mod = 1e9+7
+    }
+    return inv;
+}
+vector<ll> f(1000003, 1), finv(1000003, 1);
+void cal_factor() {
+    vector<ll> inv = mod_inv_range(1000003);
+    ll s = 1;
+    for (ll i=1;i<=f.size();i++){
+        f[i] = (f[i-1] * i) % mod;
+        finv[i] = (finv[i-1] * inv[i]) %mod;
+    }
+}
+// Verification: https://www.calculator.net/permutation-and-combination-calculator.html - tính ra nCr, nPr
+//               https://www.calculator.net/big-number-calculator.html - tính nCr % mod, nPr % mod
+ll nCr(ll n, ll r){
+    assert(n >= r && "n should be greater than r. Pick r items from n items without order");
+    return (((f[n] * finv[r]) % mod) * finv[n-r]) % mod;
+}
+ll nPr(ll n, ll r){ // P(n, r) = n! / (n−r)!
+    assert(n >= r && "n should be greater than r. Pick r items from n items with order");
+    return (f[n] * finv[n-r]) % mod;
+}
+
+bool is_good(int num, int a, int b){
+    while (num != 0){
+        if (num % 10 != a && num % 10 !=b){
+            return false;
+        }
+        num = num / 10;
+    }
+    return true;
+}
+
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    cal_factor();
+    int a, b, n;
+    ll ans = 0;
+    cin >> a >> b >> n;
+    for (int i=0;i<=n;i++){
+        int sum = a*i + b * (n-i);
+        if (is_good(sum, a, b)){
+            ans += nCr(n, i);
+            ans = ans % mod;
+        }
+    }
+    cout << ans;
+    cerr << "Time: " <<(double)clock() / CLOCKS_PER_SEC <<"s\n";
+}
+```
+</details>
