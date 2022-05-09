@@ -151,7 +151,7 @@ ll M = 1000003;
 vector<ll> inv = mod_inv_range(M);
 inv[x]; x*inv[x]=1 % mod
 */
-
+    
 vector<ll> f(1000003, 1), finv(1000003, 1);
 void pre_compute() {
     vector<ll> inv = mod_inv_range(1000003);
@@ -161,6 +161,9 @@ void pre_compute() {
         finv[i] = (finv[i-1] * inv[i]) %mod;
     }
 }
+ll nCr(ll n, ll r){
+    return (((f[n] * finv[r]) % mod) * finv[n-r]) % mod;
+}
 void solve(int t){
     ll N; cin >> N;
     vector<ll> a(N);
@@ -169,10 +172,7 @@ void solve(int t){
     }
     ll ans = 1, s = 0;
     for (ll i=0;i<N;i++){
-        // nCr f(N) = N!, 
-        ans = (ans * f[s + a[i] -1]) % mod;
-        ans = (ans * finv[a[i]-1]) % mod;
-        ans = (ans * finv[s]) % mod;
+        ans = (ans * nCr(s+a[i]-1, s)) % mod; 
         s += a[i];
     }
     cout << "Case " << t << ":" << ' ' <<ans << '\n';
