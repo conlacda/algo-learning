@@ -261,3 +261,7 @@ int main(){
 }
 ```
 </details>
+
+https://www.spoj.com/status/LCA,hoanglongvn/  
+https://www.spoj.com/status/DISQUERY,hoanglongvn/  
+(Tham khảo thêm các bài thực hành ở bên dưới của trang cp-algorithm)
