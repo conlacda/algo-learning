@@ -4,7 +4,7 @@
 Cho 1 tree, với 2 điểm bất kỳ u, v, cha chung gần nhất của 2 điểm chính là lca. Nói cách khác trên path(u->v) điểm có chiều cao thấp nhất chính là lca
 
 ## Template
-Toàn bộ code được implement theo hướng dẫn tại [CP-algorithm LCA](https://cp-algorithms.com/graph/lca.html) 
+Toàn bộ code được implement theo hướng dẫn tại [CP-algorithm LCA](https://cp-algorithms.com/graph/lca.html) (có file pdf backup trong thư mục [backup](/backup/cp-algorithm))
 
 Code [LCA template](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/LCA.sublime-snippet)
 
