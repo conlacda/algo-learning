@@ -11,11 +11,11 @@ Code [LCA template](https://github.com/conlacda/noteforprofessionals/blob/master
 ## Các bài thực hành
 
 <details>
-  <summary>1702-G1</summary>
+  <summary>1702-G1-G2</summary>
   
 ```c++
 // https://codeforces.com/contest/1702/problem/G1
-// Submission: https://codeforces.com/contest/1702/submission/164046789
+// Submission: https://codeforces.com/contest/1702/submission/164091783
 #include<bits/stdc++.h>
 
 typedef long long ll;
@@ -199,7 +199,7 @@ int main(){
 		g[v].push_back(u);
 	}
 	LCA lca(g);
-
+	vector<ll> height = lca.height();
 	ll q;
 	cin >> q;
 	for (int _=0;_<q;_++){
@@ -212,20 +212,6 @@ int main(){
 		dbg(s);
 		// Recursive (1)
 		vector<bool> vis(N, false);
-		vector<ll> height(N, 0);
-		auto explore = y_combinator([&] (auto explore, int u) -> void {
-			if (!vis[u]){
-				vis[u] = true;
-				for (auto v: g[u]){
-					if (!vis[v]){
-						height[v] = height[u] +1;
-						explore(v);
-					}
-				}
-			}
-		});
-		explore(0); // 0 is root
-		dbg(height);
 		// Lấy ra điểm thấp nhất
 		ll snode =s[0] , enode=s[0];
 		for (auto v:s){
@@ -235,16 +221,17 @@ int main(){
 		}
 		dbg(snode);
 		// Lấy ra điểm enode
-		std::fill(vis.begin(), vis.end(), false);
-		std::fill(height.begin(), height.end(), 0);
-		explore(snode);
+		ll enode_to_snode = 0;
 		for (auto v: s){
-			if (height[v] > height[enode]) enode = v;
+			// Tính khoảng cách điểm này tới điểm enode
+			ll dis = height[v] + height[snode] - 2*height[lca.lca(v, snode)];
+			if (dis > enode_to_snode){
+				enode_to_snode = dis;
+				enode = v;
+			}
 		}
 		dbg(enode);
-		// AC+CB = AB với mọi điểm C thuộc s
-		height = lca.height();
-		dbg(height);
+		// AC+CB = AB với mọi điểm
 		bool ans = true;
 		for (auto v: s){
 			ll ac = height[snode] + height[v] - 2*height[lca.lca(snode, v)];
