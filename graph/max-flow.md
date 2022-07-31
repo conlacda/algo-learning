@@ -408,3 +408,252 @@ int main()
 }
 ```
 </details>
+
+<details>
+  <summary>Coin Grid - CSES</summary>
+  
+```c++
+// https://cses.fi/problemset/task/1709/
+#include<bits/stdc++.h>
+ 
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+ 
+using namespace std;
+ 
+// Copy from nealwu's template - http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0200r0.html
+template<class Fun> class y_combinator_result { Fun fun_; public:template<class T> explicit y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {} template<class ...Args> decltype(auto) operator()(Args &&...args) { return fun_(std::ref(*this), std::forward<Args>(args)...); }}; template<class Fun> decltype(auto) y_combinator(Fun &&fun) { return y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun)); }
+ 
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+ 
+/*
+** Dinic's algorithm for maximum flow problem
+** Explain video: https://www.youtube.com/watch?v=duKIzgJQ1w8&ab_channel=FitCoder
+** Reference: https://github.com/fit-coder/fitcoderyoutube/blob/master/graph/dinic_algorithm.cpp
+** Graph Playlist: https://youtube.com/playlist?list=PLFj4kIJmwGu3m30HfYDDufr3PZBfyngr0
+** Complexity: O(E*V*V)
+*/
+class Dinic_Maxflow{
+private:
+	ll n, _n; // _n: số node của bipartite graph, n = 1+n+n+1
+	vector<vector<ll>> graph;
+	vector<vector<ll>> residualGraph;
+	vector<ll> level, count_;
+public:
+	Dinic_Maxflow(vector<vector<ll>> graph){
+		this->graph = graph;
+		this->n = graph.size();
+        this->_n = (this->n-2)/2;
+		level.resize(n, -1);
+		count_.resize(n, 0);
+	}
+	bool bfs(ll source, ll sink) // on residualGraph
+	{
+	    fill(level.begin(), level.end(), -1);
+	    level[source] = 0;
+	    
+	    queue<ll> q;
+	    q.push(source);
+	 
+	    while (!q.empty())
+	    {
+	        ll u = q.front();
+	        q.pop();
+	        for (ll v=0; v < n; v++)
+	        {
+	            if (u != v && residualGraph[u][v] > 0 && level[v] < 0)
+	            {
+	                // Level of current vertex is level of parent + 1
+	                level[v] = level[u] + 1;
+	                q.push(v);
+	            }
+	        }
+	    }
+	    // IF we can not reach to the sink we
+	    // return false else true
+	    return level[sink] < 0 ? false : true ;
+	}
+ 
+	ll sendFlow(ll u, ll sink, ll flow){ // on residualGraph
+	    // Sink reached
+	    if (u == sink)
+	        return flow;
+	 
+	    if (count_[u] == (ll) residualGraph[u].size())
+	        return 0;
+	 
+	    // Traverse all adjacent edges one-by-one.
+	    for (ll v=0; v < n; v++) {
+	        if (residualGraph[u][v] > 0) {
+	            count_[u]++;
+	            if (level[v] == level[u]+1) {
+	                // find minimum flow from u to sink
+	                ll curr_flow = min(flow, residualGraph[u][v]);
+	                ll min_cap = sendFlow(v, sink, curr_flow);
+	                if (min_cap > 0){
+	                    residualGraph[u][v] -= min_cap;
+	                    residualGraph[v][u] += min_cap;
+	                    return min_cap;
+	                }
+	            }
+	        }
+	    }
+	    return 0;
+	}
+ 
+	vector<pair<ll, ll>> mincut_edges;
+	ll max_flow(ll source, ll sink){
+	    if (source == sink)
+	        return -1;
+	 
+	    ll max_flow = 0;
+	    residualGraph = graph;
+	 
+	    // Augment the flow while there is path from source to sink
+	    while (bfs(source, sink) == true){
+	        // store how many neighbors are visited
+	        fill(count_.begin(), count_.end(), 0);
+	        // while flow is not zero in graph from source to sink
+	        while (ll flow = sendFlow(source, sink, LLONG_MAX))
+	            max_flow += flow;
+	    }
+        // Lấy ra mincut edges của đồ thị
+        mincut_edges = bipartite_mincut();
+	    return max_flow;
+	}
+ 
+    // Lấy ra mincut_edges trong đồ thị dạng bipartite
+    vector<pair<ll, ll>> bipartite_mincut(){
+        // Min-cut
+        vector<pair<ll, ll>> mincut_edges;
+        ll _n = (n-2)/2;
+        for (int i=0;i<_n;i++){
+            for (int j=0;j<_n;j++){
+                if (residualGraph[2+i][2+_n+j] == 0 && graph[2+i][2+_n+j] == 1){
+                    mincut_edges.push_back({i, j});
+                }
+            }
+        }
+        return mincut_edges;
+    }
+ 
+    // Lấy ra minimum_cover_node trong đồ thị bipartite (đồ thị bình thường thì không biết)
+    // Verification: https://cses.fi/problemset/task/1709/
+    set<int> minimum_cover_row, minimum_cover_col;
+    void cal_minimum_cover_node(){
+        // Lấy ra các row,col có chứa cạnh (ví dụ: edges= (r1->c1), (r1->c2), (r0-> c3)) -> row = (0,1), col = (1,2,3)
+        set<ll> row, col;
+        for (int i=0;i<_n;i++){
+            for (int j=0;j<_n;j++){
+                if (graph[2+i][2+_n+j] == 1) {
+                    row.insert(i);
+                    col.insert(j);
+                }
+            }
+        }
+        dbg(row, col);
+        // Tìm ra các đỉnh có cạnh kết nối nhưng không thuộc về mincut_edges nào cả
+        set<ll> no_match;
+        for (auto r: row) {
+            bool match = false;
+            for (auto v: this->mincut_edges) {
+                if (v.first == r) match = true;
+            }
+            if (!match) no_match.insert(r);
+        }
+        dbg(no_match);
+        vector<bool> vis_row(_n, false), vis_col(_n, false);
+        vector<ll> mincut_row(_n, -1), mincut_col(_n, -1);
+        for (auto v: this->mincut_edges) {
+            mincut_row[v.first] = v.second;
+            mincut_col[v.second] = v.first;
+        }
+        auto explore = y_combinator([&] (auto explore, ll u, ll signal, ll row_col) -> void {
+            if (row_col == 0) {
+                vis_col[u] = true;
+                ll mincut_node = mincut_col[u];
+                if (signal == 1) {
+                    if (!vis_row[mincut_node]) explore(mincut_node, 1-signal, 1-row_col);
+                } else{
+                    for (int i=0;i<_n;i++){
+                        // if (a[i][u] == 'o'){
+                        if (graph[2+i][2+_n+u] == 1){
+                            if (i != mincut_node && !vis_row[i]) {
+                                explore(i, 1-signal, 1-row_col);
+                            }
+                        }
+                    }
+                }
+            } else {
+                vis_row[u] = true;
+                ll mincut_node = mincut_row[u];
+                if (signal == 1){
+                    if (!vis_col[mincut_node]) explore(mincut_node, 1-signal, 1-row_col);
+                } else {
+                    for (int i=0;i<_n;i++){
+                        if (graph[2+u][2+_n+i] == 1){
+                            if (i != mincut_node && !vis_col[i]) {
+                                explore(i, 1-signal, 1-row_col);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        // DFS()
+        for (auto v: no_match) explore(v, 0, 1);
+        for (auto v: col)
+            if (vis_col[v]) minimum_cover_col.insert(v);
+        for (auto v: row)
+            if (!vis_row[v]) minimum_cover_row.insert(v);
+    }
+};
+
+int main(){
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+		freopen("out.txt", "w", stdout);
+    #endif
+	int n;
+	cin >> n;
+	vector<string> a(n);
+	for (int i=0;i<n;i++) cin >> a[i];
+	// Build graph
+	ll node_num = 2+ 2*n;
+	vector<vector<ll>> graph(node_num, vector<ll>(node_num, 0));
+	for (int i=0;i<n;i++){
+		graph[0][2+i] = 1;
+	}
+	for (int i=0;i<n;i++){
+		graph[2+n+i][1] = 1;
+	}
+	for (int i=0;i<n;i++){
+		for (int j=0;j<n;j++){
+			if (a[i][j] == 'o'){
+				graph[2+i][2+n+j] = 1;
+			}
+		}
+	}
+	Dinic_Maxflow dinic(graph);
+	ll ans = dinic.max_flow(0, 1);
+	cout << ans <<'\n';
+    dbg(dinic.mincut_edges);
+    dinic.cal_minimum_cover_node();
+    dbg(dinic.minimum_cover_col, dinic.minimum_cover_row);
+    for (auto v: dinic.minimum_cover_col){
+        cout << 2<< ' ' << v+1<<'\n';
+    }
+    for (auto v: dinic.minimum_cover_row) {
+        cout << 1<<' '<< v+1 <<'\n';
+    }
+	cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
+}
+```
+</details>
