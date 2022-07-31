@@ -1,5 +1,5 @@
 # Max flow on graph
-> Sử dụng thuật toán Dinic O(E\*V*V)
+> Sử dụng thuật toán Dinic O(E\*V*V). Do độ phức tạp nên E thường nhỏ (<1000)
 
 Bài toán max flow có khá nhiều cách giải và độ phức tạp cũng khác nhau. Tại đây sử dụng Dinic để giải (1 phần vì các template khác lỗi, hoặc tương đối khó để sử dụng)
 ## 1 vài khái niệm
@@ -8,7 +8,79 @@ Bài toán max flow có khá nhiều cách giải và độ phức tạp cũng k
 * Min-cut: là 1 đường cắt các cạnh đồ thị chia nó làm 2 nửa, min-cut value chính là tổng của các cạnh bị cắt (chỉ tính cạnh đi từ Set(s) -> Set(t) không tính cạnh đi ngược hay đi ngang). 
 	* Tìm min-cut: duyệt BFS() trên residual graph. Xét s, a, b, t. s - điểm đầu, t - điểm cuối, a,b - 2 điểm trong đồ thị. Điều kiện duyệt BFS(u) -> BFS(v) là u->v trên residual graph lớn hơn 0. (=0 nghĩa là nó đã có flow đi qua làm bão hòa. ví dụ ban đầu u->v=10 thì khi dùng 10 trên residual graph sẽ là 0). Khi này nếu uv=0 và trên graph ban đầu có u->v > 0 tức là đây là 1 cạnh bão hòa (saturated edge). Khi xóa bỏ cạnh này sẽ làm cho đồ thị bị cắt (gián đoạn). Xét hình dưới đây ![max-flow-sample-1](images/max-flow-sample-1.png)
 	Xét việc maxflow dùng cạnh 1->3, 3->5, 1->4, 4->5. 1 tại đây ko thể tới trực tiếp 3, nhưng đi tới 2 sẽ tới 3. 3 không chạm đc 5 -> Edge(3,5) chính là 1 cạnh bão hòa. Tương tự 1->4 là 1 cạnh bão hòa. Vậy min-cut edges sẽ là 3->5 và 1->4.
+* Alternating path (path đan xen): 
+![images/alternating-path.png](images/alternating-path.png)
+Xét hình trên ta có :
+	* Maxflow = 6
+	* Mincut_edges: (R1, C2), (R2, C4), (R3, C3), (R4, C5), (R5, C6), (R6, C7)
+	* Từ điểm C1 ta có alternating path là:
+		* C1->R3->C3->R4->C5->R6->C7
+		* C1->R4->C5->R3->C3->R6->C7
+		* C1->... (có tương đối nhiều alternating path)
 
+	Ta có
+	* C1->R3: không phải mincut
+	* R3->C3: là mincut
+	* C3->R4: không phải mincut
+	* R4->C5: mincut
+	* C5->R6: ko phải mincut
+	* R6->C7: mincut
+* Minimum cover vertex/node (bipartite graph)  
+	Là 1 tập hợp k node sao cho mọi cạnh của đồ thị đều có 1 điểm xuất hiện. Nói cách khác với mọi cạnh u->v thì hoặc u hoặc v phải xuất hiện trong tập hợp này.  
+## Thuật toán:
+* Tìm max flow: sử dụng Dinic
+
+	Thuật toán dinic chạy hoàn toàn trên residual graph, graph ban đầu giữ nguyên. Residual graph thể hiện flow còn lại trên mỗi cạnh
+* Tìm mincut edges:   
+	Sau khi dùng Dinic, A->B=3, B->C=2, C->D=4. Từ A->D max flow = 2. Cạnh BC chính là mincut. Khi này trên residualGraph BC=0 (nghĩa là số flow có thể đi qua BC thêm nữa = 0). residualGraph(AB) = 1 (nghĩa là AB chỉ dùng hết 2, còn dư 1).   
+	Đơn giản xét `residualGraph[u][v] = 0 && graph[u][v] > 0`.  
+	Nhưng AB=3, BC=2, CD=2. thì mincut chỉ tính BC thay vì cả CD và BC. Sử dụng BFS(u). BFS(u) -> BFS(v) với điều kiện là u->v > 0. BFS(A) -> BFS(B). Khi này `vis[B] nhưng !vis[C] và graph[B][C]` thì BC mà mincut_edge  
+	Với đồ thị bipartite, RC là 1 mincut khi `residualGraph[R][C] = 0 && graph[R][C] = 1`. 
+* Tìm minimum cover vertex/node  
+	* Thuật toán: Dinic + Konig theorem
+	* Tham khảo: 
+		* https://en.wikipedia.org/wiki/K%C5%91nig%27s_theorem_(graph_theory)
+		* https://tryalgo.org/en/matching/2016/08/05/konig/?fbclid=IwAR1Z-m7JTMLDiGTufiBtVKo--mq3JrNIdzpO0GueEdu3yUqXo7LGZm0TL5s (có backup tại thư mục backup/graph/maxflow)
+	* Chọn các node trên row (left) có cạnh nhưng không thuộc mincut_edge. Từ các node đó duyệt DFS() trên alternating path và đánh dấu lại các điểm đã duyệt. Các node đã duyệt trên col và các node chưa duyệt trên row chính là tập hợp minimum cover vertex
+	* Mã giả
+	```c++
+	set<ll> no_match;
+	for (ll r: row) {
+		if (hasEdgeFrom(r) && r not in mincut_edge) {
+			no_match.insert(r);
+		}
+	}
+	void explore(ll u, ll signal, ll to_row_or_col) {
+		if (!vis[u]) vis[u] = true;
+		if (signal == 0 && to_row_or_col == 0) {
+			// Tìm đỉnh v trên row và uv không phải mincutedge
+			explore(v, 1-signal, 1 - to_row_or_col); // 1-singal thể hiện cạnh mincut đan xen với cạnh thường (alternating), 1-to_row_or_col thể hiện đỉnh từ row nối với col rồi đỉnh từ col nối tới row
+		}
+		if (signal == 1 && to_row_or_col == 0) {
+			// Tìm đỉnh v trên row và uv là mincutedge
+			explore(v, 1-signal, 1 - to_row_or_col);
+		}
+		if (signal == 0 && to_row_or_col == 1) {
+			// Tìm đỉnh v trên col và uv không phải mincutedge
+			explore(v, 1-signal, 1 - to_row_or_col);
+		}
+		if (signal == 1 && to_row_or_col == 1) {
+			// Tìm đỉnh v trên col và uv không phải mincutedge
+			explore(v, 1-signal, 1 - to_row_or_col);
+		}	
+	}
+	// DFS()
+	for (auto v: no_match){
+		explore(v, 0, 1); // xét no_match trên row nên khi duyệt sẽ tới col đầu tiên nên to_row_or_col = 1 (to_row = 0, to_col = 1). signal thể hiện việc tìm cạnh mincut (1) hay cạnh thường (0)
+	}
+	set<ll> min_cover_nodes;
+	for (auto v: column) {
+		if (vis_col[v]) ans.insert(v);
+	}
+	for (auto v: row) {
+		if (vis_row[v]) ans.insert(v);
+	}
+	```
 ## Các vấn đề liên quan/ Mở rộng
 
 ### Bipartite Matching
