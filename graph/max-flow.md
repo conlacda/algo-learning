@@ -3,9 +3,10 @@
 
 Bài toán max flow có khá nhiều cách giải và độ phức tạp cũng khác nhau. Tại đây sử dụng Dinic để giải (1 phần vì các template khác lỗi, hoặc tương đối khó để sử dụng)
 ## 1 vài khái niệm
-* Residual graph: là đồ thị để xử lý thuật toán, đồ thị này là 1 grid N*N và thay đổi trong quá trình xử lý. Toàn bộ quá trình duyệt đều sử dụng graph này (trong thuật toán Dinic, ko dùng tới graph ban đầu)
+* Residual graph: là đồ thị để xử lý thuật toán, đồ thị này là 1 grid N*N và thay đổi trong quá trình xử lý. Toàn bộ quá trình duyệt đều sử dụng graph này (trong thuật toán Dinic, ko dùng tới graph ban đầu)  
+	Đặc điểm của residualGraph. Sau khi chạy maxflow thì residualGraph[u][v] sẽ nhỏ đi so với graph[u][v] và residualGraph[v][u] sẽ tăng lên (nhưng ko quan tâm tới [v][u] - nằm trong thuật toán). graph[u][v] - residualGraph[u][v] chính là lượng flow chạy qua uv -> residualGraph[u][v] = 0 nghĩa là uv sử dụng toàn bộ capacity và chính là 1 mincut edge
 * Augment path: 1 path từ s->t mà có số dư flow > 0
-* Min-cut: là 1 đường cắt các cạnh đồ thị chia nó làm 2 nửa, min-cut value chính là tổng của các cạnh bị cắt (chỉ tính cạnh đi từ Set(s) -> Set(t) không tính cạnh đi ngược hay đi ngang). 
+* Min-cut: là 1 đường cắt các cạnh đồ thị chia nó làm 2 nửa, min-cut value chính là tổng của các cạnh bị cắt (chỉ tính cạnh đi từ Set(s) -> Set(t) không tính cạnh đi ngược hay đi ngang). Mincut set bao gồm các cạnh có flow được sử dụng hết (residualGraph[u][v] = 0)   
 	* Tìm min-cut: duyệt BFS() trên residual graph. Xét s, a, b, t. s - điểm đầu, t - điểm cuối, a,b - 2 điểm trong đồ thị. Điều kiện duyệt BFS(u) -> BFS(v) là u->v trên residual graph lớn hơn 0. (=0 nghĩa là nó đã có flow đi qua làm bão hòa. ví dụ ban đầu u->v=10 thì khi dùng 10 trên residual graph sẽ là 0). Khi này nếu uv=0 và trên graph ban đầu có u->v > 0 tức là đây là 1 cạnh bão hòa (saturated edge). Khi xóa bỏ cạnh này sẽ làm cho đồ thị bị cắt (gián đoạn). Xét hình dưới đây ![max-flow-sample-1](images/max-flow-sample-1.png)
 	Xét việc maxflow dùng cạnh 1->3, 3->5, 1->4, 4->5. 1 tại đây ko thể tới trực tiếp 3, nhưng đi tới 2 sẽ tới 3. 3 không chạm đc 5 -> Edge(3,5) chính là 1 cạnh bão hòa. Tương tự 1->4 là 1 cạnh bão hòa. Vậy min-cut edges sẽ là 3->5 và 1->4.
 * Alternating path (path đan xen): 
@@ -654,6 +655,157 @@ int main(){
         cout << 1<<' '<< v+1 <<'\n';
     }
 	cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
+}
+```
+</details>
+
+<details>
+  <summary>Katis - maxflow</summary>
+  
+```c++
+// https://open.kattis.com/problems/maxflow
+#include<bits/stdc++.h>
+
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+
+using namespace std;
+
+// Copy from nealwu's template - http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0200r0.html
+template<class Fun> class y_combinator_result { Fun fun_; public:template<class T> explicit y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {} template<class ...Args> decltype(auto) operator()(Args &&...args) { return fun_(std::ref(*this), std::forward<Args>(args)...); }}; template<class Fun> decltype(auto) y_combinator(Fun &&fun) { return y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun)); }
+
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+
+/*
+** Dinic's algorithm for maximum flow problem
+** Explain video: https://www.youtube.com/watch?v=duKIzgJQ1w8&ab_channel=FitCoder
+** Reference: https://github.com/fit-coder/fitcoderyoutube/blob/master/graph/dinic_algorithm.cpp
+** Graph Playlist: https://youtube.com/playlist?list=PLFj4kIJmwGu3m30HfYDDufr3PZBfyngr0
+** Complexity: O(E*V*V)
+*/
+class Dinic_Maxflow{
+private:
+    ll n, _n; // _n: số node của bipartite graph, n = 1+n+n+1
+    vector<vector<ll>> graph;
+    vector<ll> level, count_;
+public:
+    vector<vector<ll>> residualGraph;
+    Dinic_Maxflow(vector<vector<ll>> graph){
+        this->graph = graph;
+        this->n = graph.size();
+        this->_n = (this->n-2)/2;
+        level.resize(n, -1);
+        count_.resize(n, 0);
+    }
+    bool bfs(ll source, ll sink) { // on residualGraph
+        fill(level.begin(), level.end(), -1);
+        level[source] = 0;
+
+        queue<ll> q;
+        q.push(source);
+     
+        while (!q.empty()) {
+            ll u = q.front();
+            q.pop();
+            for (ll v=0; v < n; v++) {
+                if (u != v && residualGraph[u][v] > 0 && level[v] < 0) {
+                    // Level of current vertex is level of parent + 1
+                    level[v] = level[u] + 1;
+                    q.push(v);
+                }
+            }
+        }
+        // if we can not reach to the sink we return false else true
+        return level[sink] < 0 ? false : true ;
+    }
+
+    ll sendFlow(ll u, ll sink, ll flow) { // on residualGraph
+        // Sink reached
+        if (u == sink)
+            return flow;
+
+        if (count_[u] == (ll) residualGraph[u].size())
+            return 0;
+     
+        // Traverse all adjacent edges one-by-one.
+        for (ll v=0; v < n; v++) {
+            if (residualGraph[u][v] > 0) {
+                count_[u]++;
+                if (level[v] == level[u]+1) {
+                    // find minimum flow from u to sink
+                    ll curr_flow = min(flow, residualGraph[u][v]);
+                    ll min_cap = sendFlow(v, sink, curr_flow);
+                    if (min_cap > 0){
+                        residualGraph[u][v] -= min_cap;
+                        residualGraph[v][u] += min_cap;
+                        return min_cap;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    vector<pair<ll, ll>> mincut_edges;
+    ll max_flow(ll source, ll sink) {
+        if (source == sink)
+            return -1;
+
+        ll max_flow = 0;
+        residualGraph = graph;
+
+        // Augment the flow while there is path from source to sink
+        while (bfs(source, sink) == true) {
+            // store how many neighbors are visited
+            fill(count_.begin(), count_.end(), 0);
+            // while flow is not zero in graph from source to sink
+            while (ll flow = sendFlow(source, sink, LLONG_MAX))
+                max_flow += flow;
+        }
+        return max_flow;
+    }
+};
+
+struct Edge{
+    ll u, v, w;
+};
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    // cout << setprecision(2);
+    int n, e, source, sink;
+    cin >> n >> e>> source>> sink;
+    vector<Edge> edges;
+    vector<vector<ll>> graph(n, vector<ll>(n, 0));
+    for (int i=0;i<e;i++){
+        ll u, v, w;
+        cin >> u >> v>> w;
+        edges.push_back({u, v, w});
+        graph[u][v] = w;
+    }
+    Dinic_Maxflow dinic(graph);
+    dbg(dinic.max_flow(source, sink));
+    cout << n << ' '<< dinic.max_flow(source, sink) <<' ';
+    vector<Edge> ans;
+    for (Edge eg: edges){
+        if (dinic.residualGraph[eg.u][eg.v] < eg.w){
+            ans.push_back({eg.u, eg.v, eg.w - dinic.residualGraph[eg.u][eg.v]});
+        }
+    }
+    cout << ans.size() <<'\n';
+    for (auto v: ans){
+        cout << v.u << ' '<< v.v<< ' '<< v.w<<'\n';
+    }
+    cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
 }
 ```
 </details>
