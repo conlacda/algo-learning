@@ -44,6 +44,27 @@ for (int i=1;i<n;i++){
     substr_num += (n - suffix_array[i]) - lcp[i-1]; // do suffix_array.size() = n nhưng lcp chỉ có n-1 phần tử
 }
 ```
+
+### Tìm 1 substring trong s (trả về index)
+> Bài này có thể giải bằng rabin karp dùng rolling hash với độ phức tạp O(n)
+
+**Thuật toán**: nhìn vào bảng trên ta thấy string đã được sắp xếp theo thứ tự tăng dần. Muốn tìm 1 string thì ta sẽ dùng `binary search` để tìm như thể 1 dãy số tăng dần.  
+**Độ phức tạp**: `O(logN) * substr.size()`. logN cho binary search, substr.size() cho thao tác so sánh string
+
+### Tìm số lần xuất hiện của substr trong s
+> Bài này cũng có thể làm bằng Rabin karp. Với bài dạng query thì rabin karp sẽ ko được. 
+
+**Thuật toán**: 1 substr xuất hiện ở string s thì sẽ là phần prefix của các string trong bảng trên. Tương tự như tìm 1 substring ở trên. Ở đây ko chỉ tìm ra 1 vị trí mà phải tìm ra lower_bound và upper_bound.  
+Tương tự như dãy số {1, 2, 2, 2, 4, 5}. Số 2 thì có lower_bound = 1, upper_bound = 4. -> có 4-1 = 3 số 2.  
+**Độ phức tạp**: `O(logN)`. logN cho lower_bound và logN cho upper_bound
+
+### Tìm longest common prefix của substrings
+`Xét 2 substring s1, s2. Max(common_prefix(s1, s2)) = ??`  
+Xét `lcp` ta có được `common_prefix` của 2 substr liên tiếp. Do đã sắp xếp nên 2 string càng gần nhau thì càng có `common_prefix` dài.  
+Ví dụ: babba, ba, bba -> thứ tự là ba, babba, bba. common_prefix của (ba, bba) sẽ nhỏ hơn (ba, babba) và (babba, bba).
+
+**Thuật toán**: với 2 index l, r (substr(l), substr(r)) tìm ra vị trí index trên bảng rồi query min(l, r) dùng RMQ hoặc segmenttree là được
+
 ## Template
 [Suffix array](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/string-suffix-array.sublime-snippet)
 
