@@ -1,5 +1,9 @@
 # Centroid decompose
 
+## Khái niệm 
+TODO
+## Ứng dụng
+TODO
 ## Tư tưởng centroid:
 + Dựng mọi node thành centroid và các centroid đó đứng cạnh nhau trong parent[] (centroid tree)
 + Thao tác update: lần lượt đi từ node đó tới các centroid cấp cao hơn và cập nhật lại bảng giá trị (ans) cho các centroid cha đó
@@ -9,6 +13,8 @@ nếu node thỏa mãn X nằm giữa A và C -> sẽ tìm được 1 centroid B
 -> không bao giờ có trường hợp A->X->C mà kết quả lại bằng ans[C] + dis(A,C)
 Verification: https://codeforces.com/contest/342/submission/152517523
 
+## Reference
+https://tanujkhattar.wordpress.com/2016/01/10/centroid-decomposition-of-a-tree/ (đã backup trong thư mục backup/tree)
 ## Template
 https://github.com/conlacda/noteforprofessionals/blob/ea39d251df/language/C%2B%2B/snippet/centroid-decomposition.sublime-snippet
 
