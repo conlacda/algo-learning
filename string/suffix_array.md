@@ -65,6 +65,22 @@ Ví dụ: babba, ba, bba -> thứ tự là ba, babba, bba. common_prefix của (
 
 **Thuật toán**: với 2 index l, r (substr(l), substr(r)) tìm ra vị trí index trên bảng rồi query min(l, r) dùng RMQ hoặc segmenttree là được
 
+### Tìm longest common substring của 2 string
+Với 2 string s1, s2. Tìm substring chung dài nhất của s1, s2.  
+**Thuật toán**: Lấy s = s1 + '|' + s2. rồi dựng SuffixArray của s. lcp là độ dài common prefix của các substring trong s. Với 2 substring a, b trong bảng trên. Điều kiện để a, b ko cùng nằm ở s1 hoặc s2 chính là suffix_array(a) và suffix_array(b) 1 cái phải nhỏ hơn vị trí | và 1 cái lớn hơn vị trí |.   
+Tóm lại:
+```c++
+ll signal_index = s.find('|') - s.begin(); // vị trí dấu |
+ll max = 0;string ans = "";
+for (int i=0;i<lcp.size();i++){
+    if (max < lcp[i] && (suffix_array[i-1] - signal_index) * (suffix_array[i] - signal_index) <0){ // a*b<0 là điều kiện để 2 cái trái dấu
+        max = lcp[i];
+        ans = s.substr(suffix_array[i-1], lcp[i]);
+        // nếu muốn tìm giá trị nhỏ nhất của ans thì chỉ cần if, else >=
+    }
+```
+**Validation**: [Longest common substring - codeforces edu](https://codeforces.com/edu/course/2/lesson/2/5/practice/contest/269656/submission/167728749)  
+**Thông tin thêm**: kí tự `|` được thêm vào tham khảo tại https://www.rapidtables.com/code/text/ascii-table.html - là kí tự đứng ngay đằng sau abcd.. 
 ## Template
 [Suffix array](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/string-suffix-array.sublime-snippet)
 
