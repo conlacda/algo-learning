@@ -18,7 +18,7 @@ Nhìn vào hình trên thì chỉ cần duyệt string và trie
 * Match s với trie: O(s.size())  
 => `O(tổng độ dài các string s+k) ~ O(10^6)` 
 ## Template
-TODO
+[Trie on string](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/string-trie.sublime-snippet)
 ## Tham khảo
 * https://www.hackerearth.com/practice/data-structures/advanced-data-structures/trie-keyword-tree/tutorial/
 * Coursera - algorithm on strings
