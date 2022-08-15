@@ -233,3 +233,6 @@ int main(){
 
 ```
 </details>
+
+## Unsolved problem
+* https://www.hackerearth.com/practice/data-structures/advanced-data-structures/trie-keyword-tree/practice-problems/
