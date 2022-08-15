@@ -131,3 +131,105 @@ int main(){
 }
 ```
 </details>
+
+<details>
+    <summary>Search Engine - hackerearth.com</summary>
+
+```c++
+#include<bits/stdc++.h>
+
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+
+using namespace std;
+
+// https://github.com/conlacda/algo-learning/blob/master/string/trie.md
+struct Node{
+    char val;
+    bool is_leaf = false;
+    vector<Node*> childs{};
+    int weight = 0;
+    Node(char val){
+        this->val = val;
+    }
+    Node* find_child(char val){
+        for (auto &n: this->childs){
+            if (n->val == val){
+                // n->weight = max(n->weight, weight);
+                return n;
+            }
+        }
+        return nullptr;
+    }
+    Node* get_or_create_child(char val, int weight){
+        // Tìm
+        Node* child = find_child(val);
+        if (child != nullptr) {
+            child->weight = max(child->weight, weight);
+            return child;
+        }
+        // Tạo mới qdpph
+        Node* new_child = new Node(val);
+        new_child->weight = weight;
+        this->childs.push_back(new_child);
+        return new_child;
+    }
+};
+ 
+struct Trie{
+    Node root = Node(0); // 0 là root, 'a', 'b' bắt đầu từ 1, 2,...
+    Trie(){}
+    void insert(string s, int weight){
+        Node* cur = &root;
+        for (auto c: s){
+            cur = cur->get_or_create_child(c, weight);
+        }
+        cur->is_leaf = true;
+    }
+    int find(string s){
+        Node* cur = &root;
+        int ans = 0;
+        for (int i=0;i<s.size();i++){
+            cur = cur->find_child(s[i]);
+            if (cur == nullptr){
+                return -1;
+            }
+            ans = cur->weight;
+        }
+        return ans;
+    }
+};
+/*
+Trie trie;
+trie.insert("string");
+Node *cur = &root;
+cur = cur->find_child(char c);
+if (cur == nullptr) tại đây là đi tới cuối trie mà ko match được với kí tự c trong s
+if (cur->if_leaf) {} // tại đây match với 1 string trong k
+*/
+
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    int n, q; cin >> n >> q;
+    Trie trie;
+    for (int i=0;i<n;i++){
+        string s; int w;
+        cin >> s >> w;
+        trie.insert(s, w);
+    }
+    for (int i=0;i<q;i++){
+        string s;
+        cin >> s;
+        cout << trie.find(s)<<'\n';
+    }
+    cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
+}
+
+```
+</details>
