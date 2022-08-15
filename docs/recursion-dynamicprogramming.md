@@ -106,7 +106,7 @@ int main(){
 </details>
 
 <details>
-    <summary>Word combinations - DP - Acce</summary>
+    <summary>Word combinations - DP - Accepted</summary>
 
 ```c++
 // https://cses.fi/problemset/task/1731/
