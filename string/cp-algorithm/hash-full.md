@@ -899,3 +899,5 @@ int main(){
 
 ```
 </details>
+
+* https://codeforces.com/contest/1056/submission/176500560
