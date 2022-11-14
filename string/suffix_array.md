@@ -297,5 +297,7 @@ int main(){
 </details>
 
 * 1 số bài tập tại: https://codeforces.com/edu/course/2/lesson/2
+
+* [Cses - string distribution](https://github.com/conlacda/algo-practice/blob/master/cses/string/Substring%20Distribution.cpp)
 ## TODO problems
 * https://www.hackerearth.com/practice/data-structures/advanced-data-structures/suffix-arrays/practice-problems/
