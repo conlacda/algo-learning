@@ -1,53 +1,8 @@
 # Disjoint set union
 
 ## Template
-
-```c++
-// Full example:
-// https://github.com/conlacda/algo-practice/blob/master/atcoder/beginner-acl/disjoint-union-set.md
-class DSU {
- public:
-  vector<int> parent, _rank;
-  DSU(int N) {
-    this->parent.resize(N);
-    this->_rank.resize(N);
-    for (int i = 0; i < N; i++) {
-      this->make_set(i);
-    }
-  }
-
-  void make_set(int v) {
-    this->parent[v] = v;
-    this->_rank[v] = 0;
-  }
-
-  int find_set(int v) {
-    if (v == parent[v]) {
-      return v;
-    }
-    return parent[v] = find_set(parent[v]);
-  }
-
-  void merge_set(int a, int b) {
-    a = find_set(a);
-    b = find_set(b);
-    if (a != b) {
-      if (_rank[a] < _rank[b]) {
-        swap(a, b);
-      }
-      parent[b] = a;
-      if (_rank[a] == _rank[b]) {
-        _rank[a]++;
-      }
-    }
-  }
-};
-/*
-DSU dsu(N);
-dsu.merge_set(u,v);
-dsu.find_set(u) == dsu.find_set(v); // check if u,v in the same SCC
-*/
-```
+* [DSU thường](https://github.com/conlacda/noteforprofessionals/blob/master/language/C++/snippet/dsu.sublime-snippet)
+* [DSU có trọng số](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/dsu-has-weight.sublime-snippet)
 
 ## Reference
 * https://cp-algorithms.com/data_structures/disjoint_set_union.html#toc-tgt-0
