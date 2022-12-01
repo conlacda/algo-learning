@@ -1,7 +1,7 @@
 # Dsu applications
 
 ## Solved problems
-
+* [Hackerearth - A website](https://github.com/conlacda/algo-practice/blob/master/hackerearth/dsu/A%20website.cpp)
 <details>
 <summary>25D Roads not only in Berland</summary>
 <p>
