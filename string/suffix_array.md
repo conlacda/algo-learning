@@ -94,5 +94,6 @@ for (int i=0;i<lcp.size();i++){
 * [Codeforces edu compilation](https://github.com/conlacda/algo-practice/tree/master/code-force/education/suffix_array)
 * [Katis - string multimatching](https://github.com/conlacda/algo-practice/blob/master/katis/string/string%20multimatching.cpp)
 * [Maximum binary numbers.cpp](https://github.com/conlacda/algo-practice/blob/master/hackerearth/suffix_array/Maximum%20binary%20numbers.cpp)
+* [Atcoder - I - Number of Substrings](https://atcoder.jp/contests/practice2/submissions/36926535)
 ## TODO problems
 * https://www.hackerearth.com/practice/data-structures/advanced-data-structures/suffix-arrays/practice-problems/
