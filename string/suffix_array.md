@@ -97,3 +97,6 @@ for (int i=0;i<lcp.size();i++){
 * [Atcoder - I - Number of Substrings](https://atcoder.jp/contests/practice2/submissions/36926535)
 ## TODO problems
 * https://www.hackerearth.com/practice/data-structures/advanced-data-structures/suffix-arrays/practice-problems/
+
+## Video hướng dẫn
+* https://github.com/conlacda/algo-video/blob/main/string/suffix_array.mp4 (mình tự soạn)
