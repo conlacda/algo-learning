@@ -76,7 +76,7 @@ Các hàm sử dụng và mục đích
 * [Codeforces - D. Good Substrings](https://github.com/conlacda/algo-practice/blob/master/code-force/medium1600-2100/271D%20-%20%20Good%20Substrings.cpp)
 * [Codeforces - C - Double Profile -2k3 - div1](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/154C%20-%20Double%20Profiles.cpp)
 * [Codeforces - E. Games on a CD - 2300](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/727E%20-%20Games%20on%20a%20CD.cpp)
-*[Codeforces - 25E - TEST - 2200](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/25E-Test.cpp)
+* [Codeforces - 25E - TEST - 2200](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/25E-Test.cpp)
 
 * https://codeforces.com/contest/1056/submission/176500560
    
