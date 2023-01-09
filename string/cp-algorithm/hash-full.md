@@ -329,3 +329,6 @@ Với mỗi index (O(N))ta dùng binary search để tìm ra len thỏa mãn (O(
 */
 ```
 </details>
+
+## Video
+* [Video tự quay](https://github.com/conlacda/algo-video/blob/main/string/cp-algorithm/hash-string.mp4) - [Video trên youtube](https://youtu.be/h63aZD-ta-Q)
