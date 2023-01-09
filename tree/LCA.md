@@ -33,9 +33,10 @@ vector<ll> height = lca.height();
 // Tính khoảng cách của 2 node
 distance(u, v) = height[u] + height[v] - 2*height[lca.lca(u, v)]
 ```
-
+**Lấy cha thứ k của 1 node**: hàm này sẽ dùng HLD để lấy. LCA với spare table có thể lấy được trực tiếp nhưng mk đã ko implement.
 ## Lưu ý:
 LCA **chỉ chạy trên tree** nên nếu có 1 bài chạy trên graph thì cần dùng **DSU** kiểm tra trước.
+
 ## Verification
 > Tiện thể cũng là các bài thực hành
 
@@ -105,7 +106,6 @@ int main(){
 
 typedef long long ll;
 const ll mod = 1e9 + 7;
-#define ld long double
 
 using namespace std;
 
@@ -186,6 +186,152 @@ int main(){
     cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
 }
 ```
+</details>
+
+<details>
+  <summary>Distance in the tree</summary>
+
+```c++
+// https://acm.timus.ru/problem.aspx?space=1&num=1471
+#include<bits/stdc++.h>
+
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+
+using namespace std;
+
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+
+class LCA{
+    struct Euler{
+        int vertex, height, index;
+    };
+    template<typename T>class LCASegmentTree{private:ll n;vector<T>dat;public:T merge(T a,T b){if(a.height>b.height)return b;return a;}LCASegmentTree(vector<T>v){int _n=v.size();n=1;while(n<_n)n*=2;dat.resize(2*n-1);for(int i=0;i<_n;i++)dat[n+i-1]=v[i];for(int i=n-2;i>=0;i--)dat[i]=merge(dat[i*2+1],dat[i*2+2]);} LCASegmentTree(int _n){n=1;while(n<_n)n*=2;dat.resize(2*n-1); } void set_val(int i,T x){i+=n-1;dat[i]=x;while(i>0){i=(i-1)/2;dat[i]=merge(dat[i*2+1],dat[i*2+2]);}}T query(int l,int r){r++;T left=T{INT_MAX,INT_MAX,INT_MAX},right=T{INT_MAX,INT_MAX,INT_MAX};l+=n-1;r+=n-1;while(l<r){if((l&1)==0)left=merge(left,dat[l]);if((r&1)==0)right=merge(dat[r-1],right);l=l/2;r=(r-1)/2;}return merge(left,right);}};
+public:
+    int n;
+    vector<vector<int>> graph;
+    vector<bool> visited;
+    vector<Euler> eulertour;
+    vector<Euler> first;
+    LCASegmentTree<Euler> *seg;
+    LCA(vector<vector<int>> graph){
+        this->graph = graph;
+        this->n = graph.size();
+        visited.resize(n);
+        first.resize(n);
+        this->makeEuler();
+    }
+
+    // Euler tour of tree
+    void makeEuler(int root = 0){
+        // Euler tour tạo ra verticies, heights, index
+        std::fill(visited.begin(), visited.end(), false);
+        int height =0;
+        std::function<void(int)> explore = [&](int u){
+            visited[u] = true;
+            height++;
+            eulertour.push_back(Euler{u, height, (int) eulertour.size()});
+            for (auto v: this->graph[u]){
+                if (!visited[v]) {
+                    explore(v);
+                    height--;
+                    eulertour.push_back(Euler{u, height, (int) eulertour.size()});
+                }
+            }
+        };
+        explore(root);
+        // Tạo ra mảng first
+        std::fill(visited.begin(), visited.end(), false);
+        for (auto e: eulertour){
+            if (!visited[e.vertex]){
+                visited[e.vertex] = true;
+                first[e.vertex] = e;
+            }
+        }
+        // Tạo 1 segment tree để query trên mảng height
+        this->seg = new LCASegmentTree<Euler>(eulertour);
+    }
+
+    int lca(int u, int v){
+        int uidx = first[u].index;
+        int vidx = first[v].index;
+        if (uidx > vidx) swap(uidx, vidx);
+        Euler a = seg->query(uidx, vidx);
+        return a.vertex;
+    }
+    /* Additional functionality*/
+    // Trả về chiều cao của 1 đỉnh h[vertex] = v_height; - chiều cao bắt đầu từ 1->n (1-indexed)
+    vector<ll> height(){
+        vector<ll> h(this->n, 0);
+        for (auto e: eulertour){
+            h[e.vertex] = e.height;
+        }
+        return h;
+    }
+    // Để tính khoảng cách: distance(u, v) = height[u] + height[v] - 2*height[lca(u, v)] - ko thêm hàm để tránh làm rắc rối thêm phần khởi tạo
+
+    int lca(int r, int u, int v){ // ar = abtrary root - LCA của u,v với r bất kỳ là root
+        int ru = lca(r, u);
+        int rv = lca(r, v);
+        int uv = lca(u, v);
+        if (ru == rv) return uv;
+        if (ru == uv) return rv;
+        return ru;
+    }
+};
+/*
+vector<vector<int>> graph(n); graph[u].push_back(v);
+LCA lca(graph);
+lca.lca(u, v);
+vector<ll> h = lca.height(); // h[root] = 1;
+Full doc: https://github.com/conlacda/algo-learning/blob/master/tree/LCA.md
+*/
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    int n; cin >> n;
+    vector<vector<pair<int,int>>> g(n);
+    vector<vector<int>> g_(n);
+    for (int i=0;i<n-1;i++){
+        int u, v, w;
+        cin >> u >> v >> w;
+        g[u].push_back({v, w});
+        g_[u].push_back(v);
+        g[v].push_back({u, w});
+        g_[v].push_back(u);
+    }
+    /*
+    duyệt DFS() để tính khoảng cách mọi điểm tới đỉnh
+    */
+    int root = 0;
+    vector<int> distance(n, 0);
+    std::function<void(int, int)> dfs = [&](int u, int parent){
+        for (auto p: g[u]) {
+            int v = p.first, w = p.second;
+            if (v == parent) continue;
+            distance[v] = distance[u] + w;
+            dfs(v, u);
+        }
+    };
+    dfs(root, -1);
+    LCA lca(g_);
+    int q;
+    cin >> q;
+    for (int i=0;i<q;i++){
+        int u, v; cin >> u >> v;
+        cout << distance[u] + distance[v] - 2*distance[lca.lca(u, v)] <<'\n';
+    }
+    // cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
+}
+```  
 </details>
 
 https://www.spoj.com/status/DISQUERY,hoanglongvn/  
