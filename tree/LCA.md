@@ -334,5 +334,49 @@ int main(){
 ```  
 </details>
 
+<details>
+  <summary>Codechef - TALCA</summary>
+
+```c++
+// https://www.codechef.com/problems/TALCA
+#include<bits/stdc++.h>
+
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+
+using namespace std;
+
+<LCA-snippet>
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    int N;
+    cin >> N;
+    vector<vector<int>> adj(N);
+    for (int i=0;i<N-1;i++){
+        int u, v;
+        cin >> u>> v;
+        u--; v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    LCA lca(adj);
+
+    int q;
+    cin >>q;
+    for (int i=0;i<q;i++){
+        int r, u, v;
+        cin >> r>> u>> v;
+        r--;u--;v--;
+        cout << lca.lca(r, u, v) +1 <<'\n';
+    }
+}
+```
+</details>
 https://www.spoj.com/status/DISQUERY,hoanglongvn/  
-(Tham khảo thêm các bài thực hành ở bên dưới của trang cp-algorithm)
+**TODO**: các bài thực hành tại [cp-algorithm](https://cp-algorithms.com/graph/lca.html#practice-problems)
