@@ -488,3 +488,5 @@ int main(){
 ```
 
 </details>
+* https://cses.fi/problemset/result/3568717/
+* https://cses.fi/problemset/result/3573305/
