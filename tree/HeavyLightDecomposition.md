@@ -62,7 +62,8 @@ vector<int> w(N); // trọng số trên các đỉnh của cây. graph sẽ ch�
                   // với weight(u, v) = weight -> uv = depth[u] > depth[v] ? u : v; w[uv] = weight; dùng for cho mọi cạnh là được
 hld.buildSegTree(w);
 ```
-**Query**
+**Query**  
+Nhớ điều chỉnh hàm trong segmenttree
 ```c++
 LCA lca(g);
 hld.query(u, lca(u, v)); hld.query(v, lca(u, v)); // query 2 nửa rồi hợp lại. max(u, v) = max(max(u, lca(u, v)), max(v, lca(u, v)));
@@ -73,8 +74,14 @@ hld.query(u, lca(u, v)); hld.query(v, lca(u, v)); // query 2 nửa rồi hợp l
 hld.kth_ancestor(u, kth);
 ```
 
-**Custom query**
+**Custom query**  
 TODO: hướng dẫn về việc sửa hàm, cách suy nghĩ khi gặp bài query
+
+**Tham số cần quan tâm**
+* pos[]: trong quá trình build segment tree, cây sau khi được decomposition sẽ được ghép từng đoạn vào thành 1 mảng rồi dựng segment tree trên mảng đó. pos[] sẽ ánh xạ chỉ số node vào với index trong segment tree.  
+  `pos[node] = segtree_index`.  
+  `seg->set_val(pos[node], val)` khi muốn cập nhật weight của node.
+
 ## Lưu ý
 
 	
