@@ -1,218 +1,49 @@
 # Heavy light decomposition
+> TODO: thêm template <class T>.
 
-## Mục đích
+## Giới thiệu chung
+
 Bằng việc chia nhỏ cây thành các đoạn nhỏ. Ta có thể
+
 * Tính khoảng cách giữa 2 node bất kỳ trên cây
 * Tính k-th ancestor của 1 node bất kỳ trên cây
 * Dựa vào segmentree có thể tính toán max, min, sum, .. của các node trên path(u->v). Path(u->v) tạo ra 1 array, có thể query trên đoạn đó với segmentree có trên cây
+
+### Giải thích thuật toán
+![image for HLD](images/hld.png)  
+
+Trên 1 cây bất kỳ, gọi sub(v) là số node con của đỉnh v. Ví dụ node 1 có sub(1) = 4 (node 4, 5, 8, 9)  
+Trong các con {u} của đỉnh v, đỉnh nào có sub(u) >= sub(v)/2 thì đó là **heavy vertex**, **uv** gọi là **heavy edge**.  
+Xét điểm 0, có con là {1, 2, 3}. 
+* sub(0) = 15
+* sub(1) = 4
+* sub(2) = 8
+* sub(3) = 0.  
+sub(2) >= sub(0)/2 nên `2 là heavy vertex`, `0->2 là heavy edge`.  
+Tương tự như thế ta sẽ được cây như hình bên trên, cạnh dày chính là **heavy**  
+Sau bước **decomposition** (lấy code theo như cp-algorithm) sẽ tới phần `builSegtree`.    
+Tại đây cây đã được chia nhỏ thành các đoạn nhỏ hơn, tạm gọi là **khối**. Các khối bao gồm các đoạn thẳng - debug các biến có trong phần khởi tạo để xem lại cách tổ chức dữ liệu.  
+Bởi vì khi này cây trở thành các đoạn thẳng, coi các đoạn đó là các mảng, dựng `segmenttree` lên toàn bộ các mảng đó ta có thể query trên cây.  
+Thuật toán tại template dựng 1 segment tree trên toàn bộ cây để tối ưu hơn.  
+**Query on path**
+max(u, v) = max(u, lca(u, v)), max(lca(u, v), v)  
+Max(u, lca(u, v)) sẽ dùng segtree query trên từng khối.
+
+TODO: cần 1 ví dụ thực tế từ decomposition tới việc query. + lý giải về sự hoạt động của từng hàm đã có.
+
+## Reference
+* [HLD - cp-algorithm](https://cp-algorithms.com/graph/hld.html) (đã backup tại [backup folder](/backup/tree/))
+
 ## Template
-<details>
-  <summary>HLD template</summary>
-  
-```c++
-template<typename T>
-class SegmentTree {
-private:
-    ll n;
-    vector<T> dat;
-public:
-    T merge(T a, T b){
-        // CHANGE HERE
-        return max(a, b); // easily modify to another function like sum()
-    }
-    SegmentTree(vector<T> v) {
-        int _n = v.size();
-        n = 1;
-        while (n < _n)n *= 2;
-        dat.resize(2 * n - 1);
-        for (int i=0;i<_n;i++) dat[n + i - 1] = v[i];
-        for (int i = n - 2; i >= 0; i--)dat[i] = merge(dat[i * 2 + 1], dat[i * 2 + 2]);
-    }
-    SegmentTree(int _n) {
-        n = 1;
-        while (n < _n)n *= 2;
-        dat.resize(2 * n - 1);
-    }
-    void set_val(int i, T x) {
-        i += n - 1;
-        dat[i] = x;
-        while (i > 0) {
-            i = (i - 1) / 2;
-            dat[i] = merge(dat[i * 2 + 1], dat[i * 2 + 2]);
-        }
-    }
-    T query(int l, int r){
-        r++;
-        T left = 0, right = 0;
-        l += n - 1; r += n - 1;
-        while (l < r) {
-            if ((l & 1) == 0)left = merge(left, dat[l]);
-            if ((r & 1) == 0)right = merge(dat[r - 1], right);
-            l = l / 2;
-            r = (r - 1) / 2;
-        }
-        return merge(left, right);
-    }
-    // Custom
-    T query(int l){
-        return query(l, l);
-    }
-    void add(int i, T x){
-        set_val(i, query(i) + x);
-    }
-};
- 
-// Reference: https://cp-algorithms.com/graph/hld.html
-// Verification: https://cses.fi/problemset/result/3568717/
-//               https://cses.fi/problemset/result/3573305/
-class HeavyLightDecomposition{
-public:
-    int n;
-    vector<int> parent, depth, heavy, head, pos;
-    int cur_pos;
-    vector<int> pos_to_vertex; // với đỉnh u -> pos[u] + 1 là đỉnh tiếp theo được duyệt. -> pos_to_vertex[pos[u]+1] ra id của đỉnh kế tiếp u
-    // dựa vào đó sẽ lấy được vị trí phía dưới trong chain (subtree) - tạm hiểu là child
-    
-    HeavyLightDecomposition(vector<vector<int>> adj) {
-        this->n = adj.size();
-        parent = vector<int>(n);
-        depth = vector<int>(n);
-        heavy = vector<int>(n, -1);
-        head = vector<int>(n);
-        pos = vector<int>(n);
-        cur_pos = 0;
-        // Recursive lambda function
-        auto dfs = y_combinator([&] (auto dfs, int v) -> int {
-            int size = 1;
-            int max_c_size = 0;
-            for (int c : adj[v]) {
-                if (c != parent[v]) {
-                    parent[c] = v, depth[c] = depth[v] + 1;
-                    int c_size = dfs(c);
-                    size += c_size;
-                    if (c_size > max_c_size)
-                        max_c_size = c_size, heavy[v] = c;
-                }
-            }
-            return size;    
-        });
-    
-        auto decompose = y_combinator([&] (auto decompose, int v, int h) -> void {
-            head[v] = h, pos[v] = cur_pos++;
-            if (heavy[v] != -1)
-                decompose(heavy[v], h);
-            for (int c : adj[v]) {
-                if (c != parent[v] && c != heavy[v])
-                    decompose(c, c);
-            }
-        });
-        // 2 hàm này sẽ tính toán toàn bộ các vector<int> parent, depth, heavy, head, pos;
-        dfs(0);
-        decompose(0, 0);
-        // Từ pos lấy ra đỉnh. Hiện tại mảng pos[vertex] = value => tạo ra map[value] = vertex 
-        auto mappos_to_value = [&] () -> void {
-            pos_to_vertex.resize(this->n);
-            for (int v=0;v<int(pos.size());v++){
-                pos_to_vertex[pos[v]] = v;
-            }   
-        };
-        mappos_to_value();
-        // dbg(parent); dbg(depth); dbg(heavy); dbg(head); dbg(pos);dbg(pos_to_vertex);
-    }
-    // Path từ nút con tới LCA. với 2 nút u, v bất kỳ: path(u, v) = path(u, lca(u,v)) + path(v, lca(u, v))
-    vector<pair<int,int>> path(int u, int p){
-        // assert(lca(u, p) == u || lca(u,p) == p)
-        vector<pair<int,int>> pth; // path
-        while (head[p] != head[u]){
-            pth.push_back({u, head[u]});
-            u = parent[head[u]]; // chạy từ u tới điểm đầu substree rồi lấy parent sẽ ra điểm cuối của subtree cha
-        }
-        // CHANGE HERE - để im nếu trọng số nằm trên cạnh. Trọng số đỉnh thì sử dụng đoạn code dưới
-        // Loại bỏ điểm p ra khỏi path - vì weight của u->p đã chạy về u nên chỉ giữ lại u
-        if (u!=p){
-            int pp = pos[p]; // pp+1=> điểm tiếp theo trong chu trình 
-            pth.push_back({u, pos_to_vertex[pp+1]});
-        }
-        // pth.push_back({u, p}); 
-        return pth;
-    }
- 
-    SegmentTree<int> *seg;
-    void buildSegTree(vector<int> weight){ // w này nằm trên đỉnh. nếu nằm trên cạnh thì chuyển qua đỉnh phía dưới edge(u,v) chọn u với u là con v
-        // pos[] lưu vị trí của các node theo thứ tự duyệt. Duyệt trong 1 khối (subtree, chain) -> duyệt từ khối này nối sang khối khác
-        vector<int> wvt(n); // weight of verticies - làm phẳng tree ra dạng [[chain1][chain2][...]...]
-        // khi này muốn query(u, v) thì sẽ chia ra [u..->tailu][...][headv..->v] rồi query từng khúc 1
-        for (int i=0;i<n;i++) wvt[pos[i]] = weight[i]; // làm phẳng cây ra thành 1 mảng với các đoạn segment nối tiếp nhau 
-	// // i là vertex, pos[i] tương ứng là index trên euler tour
-        this->seg = new SegmentTree<int>(wvt);
-    }
- 
-    int query(int u, int p){
-        // assert(lca(u,p) == u || lca(u,p) == v)
-        vector<pair<int,int>> pathu = path(u, p);
-        int ans = 0; // lưu ý trường hợp u=p với weight trên cạnh sẽ ko có path u->u do bị cắt đầu. Nên ans sẽ ko thay đổi vẫn = 0
-        for (auto chain: pathu){
-            // CHANGE HERE max() to any function
-            ans = max(ans, seg->query(pos[chain.second], pos[chain.first])); // chain lưu các đỉnh. chuyển các đỉnh đó về vị trí trong seg thì = pos[u]
-        }
-        return ans;
-    }
+	
+[HLD template](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/hld.sublime-snippet)
 
-    // verification: https://www.spoj.com/status/QTREE,hoanglongvn/
-    void set_val(int u, int val){
-        // với weight trên edge(u, v) thì if (lca.height[u] > lca.height[v]) hld.set_val(u) else hld.set_val(v). hld.set_val(child) do weight chuyển về child
-        seg->set_val(pos[u], val);
-    }
+## Usage
 
-    // verification: https://www.spoj.com/status/QTREE2,hoanglongvn/
-    int kth_ancestor(int u, int k){ // kth_ancestor(u, 0) = u;
-        assert(depth[0] +k <= depth[u]);
-        auto pathur = path(u, 0); // path u to root
-        int step = 0;
-        for (auto uv: pathur){
-            step += pos[uv.first] - pos[uv.second]; // nhảy cuối lên đầu chain
-            if (step >= k) {
-                int p = pos[uv.second] + step -k; // lấy điểm đầu chạy (step-k) bước là ra pos điểm cần tìm
-                return pos_to_vertex[p];
-            }
-            step++; // nhảy từ chain này sang chain khác
-        }
-        return 0;
-    }
-};
-/*
-vector<vector<int>> adj(N); adj[u].push_back(v); adj[v].push_back(u);
-HeavyLightDecomposition hld(adj);
- 
-vector<int> w(N); // weight tại đây chính là trọng số của đỉnh đó.
-// Nếu trọng số trên Edge(u,v) thì chuyển w về cho đỉnh con trong 2 đỉnh u,v (có thể so sánh depth)
-hld.buildSegTree(w);
- 
-LCA lca(adj);
-hld.query(u, lca.lca(u, v)); hld.query(v, lca.lca(u,v));
- 
-==========================
-Nếu trọng số nằm trên cạnh cần chuyển trọng số về cho đỉnh 
-// trong hàm main adj_w là vector<vector<pair<int (v), int (w)>>> adj_w;
-//                adj là vector<vector<int>> loại bỏ w từ adj_w
-LCA lca(adj);
-vector<int> height = lca.height();
-// Đẩy hết trọng số cạnh sang cho node con
-vector<int> weight(N, -1);
-for (int i=0;i<adj_w.size();i++){
-    for (auto vw: adj_w[i]){
-        int v = vw.first, w = vw.second;
-        if (height[i] > height[v]) weight[i] = w;
-        else weight[v] = w;
-    }
-}
-HeavyLightDecomposition hld(adj); // khởi tạo với adj ko weight
-hld.buildSegTree(weight); // build segtree có weight sau khi đã khởi tạo
-*/
-```
-</details>
+## Lưu ý
 
-## Ví dụ
+	
+## Verifications
 
 <details>
   <summary>QTREE</summary>
@@ -432,7 +263,7 @@ public:
         set_val(i, query(i) + x);
     }
 };
- 
+
 // Reference: https://cp-algorithms.com/graph/hld.html
 // Verification: https://cses.fi/problemset/result/3568717/
 //               https://cses.fi/problemset/result/3573305/
@@ -443,7 +274,7 @@ public:
     int cur_pos;
     vector<int> pos_to_vertex; // với đỉnh u -> pos[u] + 1 là đỉnh tiếp theo được duyệt. -> pos_to_vertex[pos[u]+1] ra id của đỉnh kế tiếp u
     // dựa vào đó sẽ lấy được vị trí phía dưới trong chain (subtree) - tạm hiểu là child
-    
+
     HeavyLightDecomposition(vector<vector<int>> adj) {
         this->n = adj.size();
         parent = vector<int>(n);
@@ -467,7 +298,7 @@ public:
             }
             return size;    
         });
-    
+
         auto decompose = y_combinator([&] (auto decompose, int v, int h) -> void {
             head[v] = h, pos[v] = cur_pos++;
             if (heavy[v] != -1)
@@ -507,7 +338,7 @@ public:
         // pth.push_back({u, p}); 
         return pth;
     }
- 
+
     SegmentTree<int> *seg;
     void buildSegTree(vector<int> weight){ // w này nằm trên đỉnh. nếu nằm trên cạnh thì chuyển qua đỉnh phía dưới edge(u,v) chọn u với u là con v
         // pos[] lưu vị trí của các node theo thứ tự duyệt. Duyệt trong 1 khối (subtree, chain) -> duyệt từ khối này nối sang khối khác
@@ -516,7 +347,7 @@ public:
         for (int i=0;i<n;i++) wvt[pos[i]] = weight[i]; // làm phẳng cây ra thành 1 mảng với các đoạn segment nối tiếp nhau
         this->seg = new SegmentTree<int>(wvt);
     }
- 
+
     int query(int u, int p){
         // assert(lca(u,p) == u || lca(u,p) == v)
         vector<pair<int,int>> pathu = path(u, p);
@@ -535,14 +366,14 @@ public:
 /*
 vector<vector<int>> adj(N); adj[u].push_back(v); adj[v].push_back(u);
 HeavyLightDecomposition hld(adj);
- 
+
 vector<int> w(N); // weight tại đây chính là trọng số của đỉnh đó.
 // Nếu trọng số trên Edge(u,v) thì chuyển w về cho đỉnh con trong 2 đỉnh u,v (có thể so sánh depth)
 hld.buildSegTree(w);
- 
+
 LCA lca(adj);
 hld.query(u, lca.lca(u, v)); hld.query(v, lca.lca(u,v));
- 
+
 ==========================
 Nếu trọng số nằm trên cạnh cần chuyển trọng số về cho đỉnh 
 // trong hàm main adj_w là vector<vector<pair<int (v), int (w)>>> adj_w;
@@ -619,6 +450,6 @@ int main(){
     cin >> N;
     while (N--) solve();
 }
-
 ```
+
 </details>
