@@ -1,5 +1,6 @@
 # Heavy light decomposition
-> TODO: thêm template <class T>.
+
+> TODO: thêm template \<class T\>.
 
 ## Giới thiệu chung
 
@@ -10,6 +11,7 @@ Bằng việc chia nhỏ cây thành các đoạn nhỏ. Ta có thể
 * Dựa vào segmentree có thể tính toán max, min, sum, .. của các node trên path(u->v). Path(u->v) tạo ra 1 array, có thể query trên đoạn đó với segmentree có trên cây
 
 ### Giải thích thuật toán
+    
 ![image for HLD](images/hld.png)  
 
 Trên 1 cây bất kỳ, gọi sub(v) là số node con của đỉnh v. Ví dụ node 1 có sub(1) = 4 (node 4, 5, 8, 9)  
@@ -29,6 +31,14 @@ Thuật toán tại template dựng 1 segment tree trên toàn bộ cây để t
 max(u, v) = max(u, lca(u, v)), max(lca(u, v), v)  
 Max(u, lca(u, v)) sẽ dùng segtree query trên từng khối.
 
+**Xét cây dưới đây**  
+![images/example-tree.png](images/example-tree.png)  
+Vấn đề: Cho cây và độ dài các cạnh, query độ dài từ đỉnh (u->v) bất kỳ.  
+Cách giải: Segtree yêu cầu trọng số nằm trên các đỉnh của cây, tại đây trọng số đang nằm ở cạnh (chung của 2 đỉnh). Đẩy trọng số xuống đỉnh phía dưới.
+
+![images/example-tree-weight-down.png](images/example-tree-weight-down.png)  
+Khi này trọng số sẽ nằm trên 1 đỉnh và buildSegtree trên các node như bình thường. weight(root=0) = 0.
+
 TODO: cần 1 ví dụ thực tế từ decomposition tới việc query. + lý giải về sự hoạt động của từng hàm đã có.
 
 ## Reference
@@ -40,6 +50,31 @@ TODO: cần 1 ví dụ thực tế từ decomposition tới việc query. + lý 
 
 ## Usage
 
+**Khởi tạo**:  
+Decomposition:
+```c++
+vector<vector<int>> g(N); g[u].push_back(v); g[v].push_back(u);
+HeavyLightDecomposition hld(adj);
+```
+**Build segment tree**
+```c++
+vector<int> w(N); // trọng số trên các đỉnh của cây. graph sẽ chỉ chứa cạnh và w này sẽ chứa weight.
+                  // với weight(u, v) = weight -> uv = depth[u] > depth[v] ? u : v; w[uv] = weight; dùng for cho mọi cạnh là được
+hld.buildSegTree(w);
+```
+**Query**
+```c++
+LCA lca(g);
+hld.query(u, lca(u, v)); hld.query(v, lca(u, v)); // query 2 nửa rồi hợp lại. max(u, v) = max(max(u, lca(u, v)), max(v, lca(u, v)));
+                                                  //                          sum(u, v) = sum(sum(u, lca(u, v)), sum(v, lca(u, v)));
+```
+**Kth_ancestor**
+```c++
+hld.kth_ancestor(u, kth);
+```
+
+**Custom query**
+TODO: hướng dẫn về việc sửa hàm, cách suy nghĩ khi gặp bài query
 ## Lưu ý
 
 	
