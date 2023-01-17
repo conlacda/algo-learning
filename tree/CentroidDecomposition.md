@@ -16,7 +16,7 @@ Verification: https://codeforces.com/contest/342/submission/152517523
 ## Reference
 https://tanujkhattar.wordpress.com/2016/01/10/centroid-decomposition-of-a-tree/ (đã backup trong thư mục backup/tree)
 ## Template
-https://github.com/conlacda/noteforprofessionals/blob/ea39d251df/language/C%2B%2B/snippet/centroid-decomposition.sublime-snippet
+[Centroid tree template](https://github.com/conlacda/noteforprofessionals/blob/ea39d251df/language/C%2B%2B/snippet/centroid-decomposition.sublime-snippet)
 
 ##
 
