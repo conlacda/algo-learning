@@ -228,4 +228,87 @@ int main(){
 }
 ```
 </details>  
-* https://cses.fi/problemset/result/3573305/
+
+<details>
+  <summary>CSES - New Roads Queries</summary>
+
+```c++
+// https://cses.fi/problemset/task/2101/
+#include<bits/stdc++.h>
+ 
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+ 
+using namespace std;
+ 
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+ 
+<DSU-snippet>
+<LCA-snippet>
+<HLD-snippet>
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    int N, r, q;
+    cin >> N >> r>>q;
+    DSU dsu(N);
+    // Đọc vào các road
+    vector<vector<int>> adj(N);
+    vector<vector<pair<int,int>>> adj_w(N);
+    for (int i=0;i<r;i++){
+        int u, v;
+        cin>>u>>v;
+        u--; v--;
+        if (dsu.find_set(u) != dsu.find_set(v)){
+            dsu.merge_set(u, v);
+            adj[u].push_back(v); adj[v].push_back(u);
+            adj_w[u].push_back({v, i+1}); adj_w[v].push_back({u, i+1});
+        }
+    }
+    // Kết nối toàn bộ dsu rời rạc vào với nhau và có trọng số INT_MAX
+    int root = 0;
+    for (int i=0;i<N;i++){
+        if (dsu.find_set(i) != dsu.find_set(root)){
+            int p = dsu.find_set(i);
+            dsu.merge_set(p, root);
+            adj[root].push_back(p); adj[p].push_back(root);
+            adj_w[root].push_back({p, INT_MAX}); adj_w[p].push_back({root, INT_MAX});
+        }
+    }
+    // Set up
+    LCA lca(adj);
+    vector<ll> height = lca.height();
+    // Đẩy hết trọng số cạnh sang cho node con
+    vector<int> weight(N, -1);
+    for (int i=0;i<adj_w.size();i++){
+        for (auto vw: adj_w[i]){
+            int v = vw.first, w = vw.second;
+            if (height[i] > height[v]) weight[i] = w;
+            else weight[v] = w;
+        }
+    }
+    HeavyLightDecomposition hld(adj);
+    hld.buildSegTree(weight);
+    // Resolve
+    for (int i=0;i<q;i++){
+        int u, v;
+        cin >> u>>v; u--;v--;
+        int p = lca.lca(u, v);
+        int ans = max(hld.query(u, p), hld.query(v, p));
+        if (ans == INT_MAX){
+            cout << -1<<'\n';
+        } else cout << ans<<'\n';
+    }
+    cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
+}
+```
+</details>
