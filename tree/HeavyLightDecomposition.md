@@ -69,7 +69,7 @@ LCA lca(g);
 hld.query(u, lca(u, v)); hld.query(v, lca(u, v)); // query 2 nửa rồi hợp lại. max(u, v) = max(max(u, lca(u, v)), max(v, lca(u, v)));
                                                   //                          sum(u, v) = sum(sum(u, lca(u, v)), sum(v, lca(u, v)));
 ```
-<img src="images/graph-query-explain.png" alt="drawing" width="200"/>  
+<img src="images/graph-query-explain.png" alt="drawing" width="60%"/>  
 
 Với bài toán mà nằm trên cạnh ta thấy trọng số sẽ dồn về node dưới, `query(5, 6) = query(edge(53), edge(32), edge(26)) = query(5, 3, 6) = query(5->3, 6->6)- không xuất hiện 2 là lca(5,6)`.  
 Nhưng nếu trọng số nằm trên cạnh thì `query(5, 6) = query(5, 2) && query(6, 2) = query(5->2, 6->2)` và có xét tới lca(5,6)
