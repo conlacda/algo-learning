@@ -168,5 +168,64 @@ int main(){
 ```
 </details>
     
-* https://cses.fi/problemset/result/3568717/    
+<details>
+  <summary>Path Queries II- CSES</summary>
+
+```c++
+// https://cses.fi/problemset/task/2134/
+#include<bits/stdc++.h>
+ 
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+ 
+using namespace std;
+ 
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+<LCA-snippet>
+<HLD-snippet>
+int main(){
+    ios::sync_with_stdio(0); cin.tie(0);
+    int N, q;
+    cin >> N >> q;
+    vector<int> w(N);
+    for (int i=0;i<N;i++) cin >> w[i];
+    vector<vector<int>> adj(N);
+    for (int i=0;i<N-1;i++){
+        int u, v;
+        cin >> u>>v; u--; v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    HeavyLightDecomposition hld(adj);
+    hld.buildSegTree(w);
+    LCA lca(adj);
+    // Query
+    for (int i=0;i<q;i++){
+        int t, u, v;
+        cin >> t >> u>>v; 
+ 
+        if (t == 2) {
+            u--;v--;
+            // Query u->LCA(u), v->LCA(v);
+            int p = lca.lca(u, v);
+            // cout << u<< ' '<<v<< ' '<< lca.lca(u, v) << '\n';
+            // Lấy ra path từ u->lca, v->lca
+ 
+            cout << max(hld.query(u, p), hld.query(v, p)) << ' ';
+        } else {
+            // t == 1
+            // Update value
+            u--;
+            hld.seg->set_val(hld.pos[u] , v);
+        }
+    }
+    cerr << "Time : " << (double)clock() / (double)CLOCKS_PER_SEC << "s\n";
+}
+```
+</details>  
 * https://cses.fi/problemset/result/3573305/
