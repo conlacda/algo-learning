@@ -80,7 +80,24 @@ hld.kth_ancestor(u, kth);
 ```
 
 **Custom query**  
-TODO: hướng dẫn về việc sửa hàm, cách suy nghĩ khi gặp bài query
+Giả sử hàm query trên đoạn là hàm min(). Tìm min trên path (u->v)  
+HLD **không hỗ trợ query từ 2 node bất kỳ** nên ta cần tách thành `path(u->v) = min(path(u->lca(u, v)), path(v->lca(u, v))`  
+Xét 4 mục `CHANGE HERE`:  
+* (1), (4) là phần cần thay đổi hàm query, ví dụ min(), max(), and(&), or(|), sum()  
+* (2), (3) là phần để xác định xem đoạn nào cần được lấy.  
+
+Xác định xem đoạn path nào cần được query.  
+Xét nhánh cây `2->5->6` & `2->7`  
+* Trọng số nằm trên đỉnh - Hàm max(), min(), and(&),... - hàm không bị ảnh hưởng khi 1 phần tử được tính trong 2 lần query
+  `path(6, 7) = max(path(6, 2), path(7,2))`. 2 được tính trong cả path(6,2) và path(7,2) nhưng kết quả không đổi  
+  => **path(u,v) = path(u, lca(u, v)) merge path(v, lca(u, v))** + **Lấy CHANGE HERE 3, bỏ CHANGE HERE 2**  
+
+* Trọng số nằm trên đỉnh - Hàm sum(), ... - hàm ảnh hưởng khi 1 node được tính 2 lần.  
+  `path(6, 7) = sum(path(6, 2), path(7, 2)) - weight[2]` - tại đây weight[2] chỉ được tính 1 lần nên phải trừ đi weight[2] do path(6,2), path(7,2) đã đếm 2 lần  
+  => **path(u, v) = path(u, lca(u, v)) merge path(v, lca(u, v)) - weight[lca(u, v)]** + **Lấy CHANGE HERE 3, bỏ CHANGE HERE 2**  
+
+* Trọng số nằm trên cạnh - trọng số nằm trên cạnh sẽ được chuyển xuống node bên dưới. Do đó khi query luôn bỏ ra node lca(u,v) vì node đó chứa trọng số của nó với đỉnh bên trên, không nằm trên path(u->v) - **lấy phần CHANGE HERE 2 và loại bỏ CHANGE HERE 3**
+ 
 
 **Tham số cần quan tâm**
 * pos[]: trong quá trình build segment tree, cây sau khi được decomposition sẽ được ghép từng đoạn vào thành 1 mảng rồi dựng segment tree trên mảng đó. pos[] sẽ ánh xạ chỉ số node vào với index trong segment tree.  
