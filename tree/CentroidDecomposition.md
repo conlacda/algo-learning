@@ -570,3 +570,121 @@ int main(){
 }
   ```
 </details>
+
+<details>
+    <summary>Fixed-Length Paths I</summary>
+
+```c++
+#include<bits/stdc++.h>
+ 
+typedef long long ll;
+const ll mod = 1e9 + 7;
+#define ld long double
+ 
+using namespace std;
+ 
+// Copy from nealwu's template - http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0200r0.html
+template<class Fun> class y_combinator_result { Fun fun_; public:template<class T> explicit y_combinator_result(T &&fun): fun_(std::forward<T>(fun)) {} template<class ...Args> decltype(auto) operator()(Args &&...args) { return fun_(std::ref(*this), std::forward<Args>(args)...); }}; template<class Fun> decltype(auto) y_combinator(Fun &&fun) { return y_combinator_result<std::decay_t<Fun>>(std::forward<Fun>(fun)); }
+ 
+#ifdef DEBUG
+#include "debug.cpp"
+#else
+#define dbg(...)
+#endif
+ 
+class CentroidDecomposition{
+private:
+    int N;
+    vector<vector<int>> original_gr;
+public:
+    vector<int> childNum;
+    ll ans = 0;
+    vector<int> cnt;
+    vector<bool> removed;
+    vector<int> branch;
+    int max_depth = 0, branch_depth = 0;
+    int k;
+    CentroidDecomposition(vector<vector<int>> original_gr, int k){
+        // Assign values
+        this->N = original_gr.size();
+        this->original_gr = original_gr;
+        this->k = k;
+        childNum.assign(N, 0);
+        removed.resize(N, false);	
+        // initial calls
+        cal_childNum(0, -1);
+        cnt.resize(N, 0); cnt[0] = 1;
+        branch.resize(k+1, 0);
+        decompose(0, -1); // return parent[]
+    }
+    int cal_childNum(int root, int parent){
+    	// Optimize doan nay call childNum cho 1 phần
+        childNum[root] = 0;
+        for (auto v: original_gr[root]){
+            if (v != parent && !removed[v]) 
+                childNum[root] += cal_childNum(v, root) +1;
+        }
+        return childNum[root];
+    }
+    int get_centroid(int root, int parent, int n){
+        for (auto v: original_gr[root]){
+            if (v != parent && !removed[v])
+                if (childNum[v] +1 > n/2) return get_centroid(v, root, n); 
+        }
+        return root;
+    }
+    void decompose(int u, int c){
+        int size_subTree = cal_childNum(u, c) + 1;
+        int sub_centroid = get_centroid(u, u, size_subTree);
+        // Xử lý centroid này tại đây
+        auto explore = y_combinator([&] (auto explore, int u, int p, int depth) -> void {
+            ans += 1LL * cnt[k - depth];
+            branch[depth]++;
+            branch_depth = max(branch_depth, depth);
+            for (auto v: original_gr[u]){
+                if (v == p || removed[v]) continue;
+                if (depth+1 <= k)
+                    explore(v, u, depth+1);
+            }
+        });
+        for (auto v: original_gr[sub_centroid]){
+        	if (!removed[v])
+	            explore(v, sub_centroid, 1);
+            for (int i=0;i<=branch_depth;i++){
+                cnt.at(i) += branch.at(i);
+                branch[i] = 0;
+            }
+            cnt[0] = 1;
+            max_depth = max(max_depth, branch_depth);
+            branch_depth = 0;
+        }
+        fill(cnt.begin(), cnt.begin() + max_depth+1, 0); cnt[0] =1;
+        max_depth = 0;
+        removed[sub_centroid] = true;
+        for (auto v: original_gr[sub_centroid]){
+        	if (!removed[v]) decompose(v, sub_centroid);
+        }
+    }
+};
+ 
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    #ifdef DEBUG
+        freopen("inp.txt", "r", stdin);
+        freopen("out.txt", "w", stdout);
+    #endif
+    int N, k;
+    cin >> N >> k;
+    vector<vector<int>> g(N);
+    for (int i=0;i<N-1;i++){
+        int u, v;
+        cin >> u >> v; u--; v--;
+        g[u].push_back(v);
+        g[v].push_back(u);
+    }
+    CentroidDecomposition ctd(g, k);
+    cout << ctd.ans << '\n';
+}
+```
+</details>
