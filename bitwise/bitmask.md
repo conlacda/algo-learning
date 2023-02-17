@@ -1,5 +1,6 @@
 # Bitmask technique
-
+## Mục đích
+Cho 1 tập hợp a{N}. Tìm cách duyệt/ tìm kiếm trong Combination(a) ra 1 tập hợp thỏa mãn điều kiện gì đó.
 ## Sơ lược
 Cho tập hợp n số a (a1,a2,a3,...,an). Tìm ra toàn bộ các subset của a (lặp qua toàn bộ subset của a).
 
@@ -28,7 +29,20 @@ for (int i=0;i<1<<a.size();i++){ // 1<<a.size() = 2^n
 ```
 với 1 vòng for ta sẽ duyệt qua được toàn bộ subset. với vòng for bên trong ta sẽ lấy ra được trong subset đó có những phần tử nào. 
 
-# Các bài thực hành
+## Bitmask 0, 1
+Cho 1 tập các phần tử => tổ hợp (combination) các phần tử đó.  
+Khi này sắp xếp các phần tử cạnh nhau và hình dung nó như là hàng đơn vị, hàng chục,... nhưng mỗi hàng chỉ có 2 giá trị 0,1.  
+Khi này chọn 1 phần tử vào tập hợp tương đương với số 1 và ko chọn là số 0. Đơn giản chỉ cần for (i = 1..n) rồi chuyển i về dạng base 2.
+
+## Bitmask n phần tử
+Khác 1 chút so với bitmask 0,1. Bitmask 0,1 để chọn ra combination nhưng ko được trùng lặp -> chỉ có chọn(1) or không (0).  
+Bitmask n sẽ quyết định chọn phần tử nào tại vị trí đó (n giá trị). 
+![image](https://user-images.githubusercontent.com/33364412/219572064-03310d87-1fd5-4822-8b9d-a65cba3b166b.png)
+Theo như hình trên thì các phần tử bitmask 0-1 sắp xếp theo hàng ngang và chọn giá trị 0-1, độ dài = a.size()   
+Bitmask N thì các phần tử được chọn trên hàng dọc và có độ dài N tùy ý.  
+Sử dụng [Decimal To base N](https://github.com/conlacda/noteforprofessionals/blob/master/programming-language/C%2B%2B/snippet/decimal_to_n.sublime-snippet) vì mặc định máy tính chỉ là base 2
+
+## Các bài thực hành
 <details>
   <summary>CSES - Prime Multiples</summary>
   
