@@ -29,6 +29,25 @@ for (int i=0;i<1<<a.size();i++){ // 1<<a.size() = 2^n
 ```
 với 1 vòng for ta sẽ duyệt qua được toàn bộ subset. với vòng for bên trong ta sẽ lấy ra được trong subset đó có những phần tử nào. 
 
+<details>
+    <summary>Ví dụ tính tổng</summary>
+
+```c++
+vector<int> a{1, 3, 4};
+vector<int> sum_collections;
+for (int i=0;i<1<<a.size();i++){ // 0 -> 2^3 000 -> 111
+    ll sum = 0;
+    for (int j=0;j<a.size();j++){ // 0->2
+        if (i&(1<<j)) { // 010 & (1<<1) -> 010 & 010 -> true || 010 & (1<<0) -> false. Check xem i có bit 1 tại vị trí j nào. Nếu bit 1 tại j thì a[j] được chọn và sum += a[j]
+            sum += a[j];
+        }
+    }
+    sum_collections.push_back(sum);
+}
+// sum_collections sẽ chứa mọi tổng có được từ a
+```
+</details>
+
 ## Bitmask 0, 1
 Cho 1 tập các phần tử => tổ hợp (combination) các phần tử đó.  
 Khi này sắp xếp các phần tử cạnh nhau và hình dung nó như là hàng đơn vị, hàng chục,... nhưng mỗi hàng chỉ có 2 giá trị 0,1.  
