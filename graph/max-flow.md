@@ -91,7 +91,7 @@ Xét hình trên ta có :
 * https://www.youtube.com/watch?v=oHy3ddI9X3o&ab_channel=MITOpenCourseWare
 * https://www.youtube.com/watch?v=VYZGlgzr_As&ab_channel=MITOpenCourseWare
 ## Template
-[Max flow dinic template](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/graph-dinic-max_flow.sublime-snippet)
+[Max flow dinic template](https://github.com/conlacda/noteforprofessionals/blob/master/programming-language/C%2B%2B/snippet/graph-dinic-max_flow.sublime-snippet)
 ## Bài giải
 
 <details>
