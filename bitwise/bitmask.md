@@ -48,12 +48,12 @@ for (int i=0;i<1<<a.size();i++){ // 0 -> 2^3 000 -> 111
 ```
 </details>
 
-## Bitmask 0, 1
+## Bitmask 0, 1 (phổ biến)
 Cho 1 tập các phần tử => tổ hợp (combination) các phần tử đó.  
 Khi này sắp xếp các phần tử cạnh nhau và hình dung nó như là hàng đơn vị, hàng chục,... nhưng mỗi hàng chỉ có 2 giá trị 0,1.  
 Khi này chọn 1 phần tử vào tập hợp tương đương với số 1 và ko chọn là số 0. Đơn giản chỉ cần for (i = 1..n) rồi chuyển i về dạng base 2.
 
-## Bitmask n phần tử
+## Bitmask n phần tử (ít dùng hơn)
 Khác 1 chút so với bitmask 0,1. Bitmask 0,1 để chọn ra combination nhưng ko được trùng lặp -> chỉ có chọn(1) or không (0).  
 Bitmask n sẽ quyết định chọn phần tử nào tại vị trí đó (n giá trị). 
 ![image](https://user-images.githubusercontent.com/33364412/219572064-03310d87-1fd5-4822-8b9d-a65cba3b166b.png)
@@ -61,6 +61,27 @@ Theo như hình trên thì các phần tử bitmask 0-1 sắp xếp theo hàng n
 Bitmask N thì các phần tử được chọn trên hàng dọc và có độ dài N tùy ý.  
 Sử dụng [Decimal To base N](https://github.com/conlacda/noteforprofessionals/blob/master/programming-language/C%2B%2B/snippet/decimal_to_n.sublime-snippet) vì mặc định máy tính chỉ là base 2
 
+Khi này:   
+Giả sử N độ dài 5, có 4 giá trị 0, 1, 2, 3 - tương ứng A,B,C,D sẽ được chọn ra  
+00000  
+00001  
+00002  
+00003  
+00010  
+.....  
+.....  
+33323  
+33330  
+33331  
+33332  
+33333  
+Các số trên này là base 4, tương ứng với 0 tới 1023 tại base 10.  
+```c++
+for (int i=0;i<=1023;i++) {
+    int k = toBaseN(i, 4);
+    // từ k này check từng bit để xem giá trị nào đã được lấy ra
+}
+```
 ## Các bài thực hành
 <details>
   <summary>CSES - Prime Multiples</summary>
