@@ -18,8 +18,8 @@ Khi dùng hash từ không gian mẫu lớn về không gian mẫu nhỏ (thông
 ### Giải thích code có trong template
 
 Các tham số cần lưu ý:
-* `min_char`: đây là giá trị nhỏ nhất trong Iterable s, thường là 'a', '0', 'A' cho string hoặc 0 với vector<int>. Tham khảo ascii table tại [đây](https://www.rapidtables.com/code/text/ascii-table.html). '0' < 'A' < 'a'
-* `factor`: mặc định = 31. Vì 31 là prime và lớn hơn 26 là kích thước của bảng alphabet. `factor nên là số nguyên tố lớn hơn max_char - min_char`.  
+* `min_char`: min(s.begin(), s.end()). Hiện tại `min_char = char(0)` chạy được cho `string, number`. (trước đó dùng a cho alphabet, 0 cho số tự nhiên)
+* `factor`: là số nguyên tố lớn hơn không gian kí tự của S, ví dụ không gian mẫu alphabet là 26, toàn bộ bảng [Ascii](https://www.asciitable.com/) có 127 kí tự -> chọn `137`   
     Giải thích: `string s = ab; hash = a+b*factor`. Nếu `factor < max_char - min_char` thì `a+b*factor = c+d*factor`. Ví dụ `factor = 10 < 26. a+10b = c+10d => a=b=1,c=11,d=0` -> ab, cd collsion ngay tại 2 chữ số chứ chưa cần tới collision trong không gian 10^6 phần tử. 
 
 Các hàm sử dụng và mục đích
