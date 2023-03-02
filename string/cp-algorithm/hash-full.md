@@ -13,7 +13,7 @@ Khi dùng hash từ không gian mẫu lớn về không gian mẫu nhỏ (thông
 
 ## Template
 
-[Hash string template](https://github.com/conlacda/noteforprofessionals/blob/master/language/C%2B%2B/snippet/hash-string.sublime-snippet)
+[Hash string template](https://github.com/conlacda/noteforprofessionals/blob/master/programming-language/C%2B%2B/snippet/hash-string.sublime-snippet)
 
 ### Giải thích code có trong template
 
