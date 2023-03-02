@@ -17,20 +17,28 @@ Khi dùng hash từ không gian mẫu lớn về không gian mẫu nhỏ (thông
 
 ### Giải thích code có trong template
 
-Các tham số cần lưu ý:
+**Các tham số cần lưu ý:**
 * `min_char`: min(s.begin(), s.end()). Hiện tại `min_char = char(0)` chạy được cho `string, number`. (trước đó dùng a cho alphabet, 0 cho số tự nhiên)
 * `factor`: là số nguyên tố lớn hơn không gian kí tự của S, ví dụ không gian mẫu alphabet là 26, toàn bộ bảng [Ascii](https://www.asciitable.com/) có 127 kí tự -> chọn `137`   
     Giải thích: `string s = ab; hash = a+b*factor`. Nếu `factor < max_char - min_char` thì `a+b*factor = c+d*factor`. Ví dụ `factor = 10 < 26. a+10b = c+10d => a=b=1,c=11,d=0` -> ab, cd collsion ngay tại 2 chữ số chứ chưa cần tới collision trong không gian 10^6 phần tử. 
 
-Các hàm sử dụng và mục đích
-* `Hash hash; hash.build();` để khởi tạo.  
-    `hash.build(s.size()+5);` được sử dụng để tiết kiệm thời gian tính toán hơn  
-* `hash.once(s); hash.ronce(s)` hash xuôi, hash ngược cho s - hàm này dạng rolling.
-* `hash.load(s); hash.substr(start, length)` sau khi dùng load(s) (O(n)) thì việc lấy giá trị hash của 1 range bất kỳ mất O(1)  
-    `hash.rload(s); hash.rsubstr(start, length)` tương tự như load(s), substr(start, length) nhưng theo chiều ngược lại.  
-    Ví dụ: `string s = "abcd";` thì `substr(0, 3) = once("abc");` `substr(2, 3) = once("cda");`, `rsubstr(0, 3) = once("adc") = substr(2, 3)`
-    Nếu muốn `substr(l, r)` dạng thông thường, ko có dạng rolling từ cuối ngược lên đầu thì thêm `assert` ở hàm `substr` là được.
-* Khi muốn so sánh 2 substr/vector/set,... thì cần so sánh 2 hash xuôi và ngược cùng 1 lúc  
+**Đầu ra của hash:**  
+Hash nhận đầu vào là string hoặc (start, length) đánh dấu vị trí substr và trả ra pair<ll, ll> = {hash_toward, hash_backward} (hash xuôi và ngươc)  
+
+**Các hàm sử dụng và mục đích:**  
+
+* `Hash<string> hash; hash.build();` để khởi tạo.  
+    `hash.build(s.size());` được sử dụng để tiết kiệm thời gian tính toán hơn  
+**Hash 1 lần - O(N)**
+* `hash.hash(s);` pair{hash xuôi, hash ngược cho s}.  
+**Hash nhiều lần - load O(N) - hash O(1)**  
+* `hash.load(s)`: chuẩn bị cho việc hash substring của s  
+* `hash.substr(start, length)`: lấy giá trị hash của s.substr(start, length) - hash dạng vòng tròn   
+    Ví dụ: `string s = "abcd";` thì `hash.substr(0, 3) = hash.hash("abc");` `hash.substr(2, 3) = hash.hash("cda");`  
+    Để đảm bảo trong bài hash dạng thông thường ko bị hash tràn biên kiểu rolling hash thì dùng:   
+    `assert(length <= (ll) s.size());`: dùng cho rolling hash  
+    `assert(start+length <= (ll) s.size());` sẽ dùng cho hash thông thường  
+* Khi muốn so sánh 2 substr/vector/set,... thì cần so sánh 2 hash xuôi và ngược cùng 1 lúc (đổi template nhưng chưa cập nhật đoạn này)  
     Ví dụ:
     ```c++
     Iterable a, b;
@@ -77,8 +85,8 @@ Các hàm sử dụng và mục đích
 * [Codeforces - C - Double Profile -2k3 - div1](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/154C%20-%20Double%20Profiles.cpp)
 * [Codeforces - E. Games on a CD - 2300](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/727E%20-%20Games%20on%20a%20CD.cpp)
 * [Codeforces - 25E - TEST - 2200](https://github.com/conlacda/algo-practice/blob/master/code-force/hard-from-2200/25E-Test.cpp)
-* [Codeforces - 1056_E._Check_Transcription - 2100](https://github.com/conlacda/algo-practice/blob/master/code-force/medium1600-2100/1056_E._Check_Transcription.cpp)
-   
+* [Codeforces - 1056_E._Check_Transcription - 2100](https://github.com/conlacda/algo-practice/blob/master/code-force/medium1600-2100/1056_E._Check_Transcription.cpp) 
+* [Codeforces - 858-D.Polycarp's phone book.cpp - 1600](https://github.com/conlacda/algo-practice/blob/master/code-force/medium1600-2100/858-D.Polycarp's%20phone%20book.cpp)
 <details>
     <summary>USACO 2017 US Open Contest, Gold Problem 1. Bovine Genomics</summary>
 
