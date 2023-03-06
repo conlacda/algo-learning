@@ -96,4 +96,4 @@ Với hash xuôi, ngược mọi tham số gần như cố định, tốc độ 
 **Mở rộng**:
 * Hash mở rộng ra tính substr với tốc độ O(1)
 * Tính substr tràn biên cũng với tốc độ O(1)
-* Hash mở rộng ra với cả vector (bất kỳ cấu trúc nào có thể lặp qua) - Hash<vector<int>> hash;
+* Hash mở rộng ra với cả vector (bất kỳ cấu trúc nào có thể lặp qua) - Hash\<vector\<int\>\> hash;
