@@ -1,3 +1,7 @@
+---
+custom_edit_url: https://github.com/conlacda/docc/blob/dev/docs/competitive-programming/string/hash-string.md
+---
+
 # String hash
 > Tài liệu gốc tham khảo tại [Cp-algorithm Hashstring](https://cp-algorithms.com/string/string-hashing.html#improve-no-collision-probability)
 
