@@ -71,7 +71,7 @@ Segment tree gồm các thao tác chính:
 * Tìm kiếm nhị phân với hàm query.  
     Ví dụ hàm merge là max(a,b) thì với query ta sẽ tìm được max(range[x:y]) rồi tìm được giá trị yêu cầu (ví dụ 1 bên dưới)
 
-** Các biến thể**  
+**Các biến thể**  
 * Lazy segment tree - tương đương range update (bao gồm cả range query và point query)
 * Segment tree beats
 * Thay thế fenwicktree - point update range query.
